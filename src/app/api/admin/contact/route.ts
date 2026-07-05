@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { withAdmin, jsonError } from "@/lib/admin-route";
+import { withAdmin, withAdminMutation, jsonError } from "@/lib/admin-route";
 
 const contactPutSchema = z.object({
   phones: z.union([z.string(), z.array(z.string())]),
@@ -40,7 +40,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  return withAdmin(async () => {
+  return withAdminMutation(request, async () => {
     let body: unknown;
     try {
       body = await request.json();

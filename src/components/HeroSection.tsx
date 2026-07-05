@@ -148,7 +148,7 @@ export default function HeroSection() {
               animate={showText ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
               transition={textTransition()}
             >
-              {t.common.brand.name}
+              {t.home.hero.headline || t.common.brand.name}
             </motion.h1>
             <motion.h2
               className={styles.titleSub}

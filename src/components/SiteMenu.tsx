@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { usePathname } from "next/navigation";
 import { useLocale } from "@/context/LocaleProvider";
-import { SOCIAL_LINKS } from "@/data/site";
 import styles from "./SiteMenu.module.css";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -124,18 +123,15 @@ export default function SiteMenu({
   open: boolean;
   onClose: () => void;
 }) {
-  const { t, locale, localizePath } = useLocale();
+  const { t, locale, localizePath, navLinks, contactSettings } = useLocale();
   const lenis = useLenis();
   const pathname = usePathname();
 
-  const navLinks = [
-    { label: t.common.nav.home, href: localizePath("/") },
-    { label: t.common.nav.projects, href: localizePath("/projects") },
-    { label: t.common.nav.blog, href: localizePath("/blog") },
-    { label: t.common.nav.services, href: `${localizePath("/")}#services` },
-    { label: t.common.nav.contact, href: localizePath("/contact") },
-    { label: t.common.nav.faq, href: `${localizePath("/")}#faq` },
-  ];
+  const resolvedNavLinks = navLinks.map((link) => ({
+    label: link.label,
+    href: link.external ? link.href : localizePath(link.href),
+    external: link.external,
+  }));
 
   useEffect(() => {
     onClose();
@@ -188,11 +184,11 @@ export default function SiteMenu({
                 <LiveClock locale={locale} />
 
                 <div className={styles.social}>
-                  {SOCIAL_LINKS.map((link) => (
+                  {contactSettings.socialLinks.map((link) => (
                     <MenuLink
                       key={link.key}
                       href={link.href}
-                      label={t.site.social[link.key]}
+                      label={link.label}
                       external
                       className={styles.socialLink}
                     />
@@ -201,7 +197,7 @@ export default function SiteMenu({
               </div>
 
               <nav className={styles.mainMenu} aria-label="Main menu">
-                {navLinks.map((link, index) => (
+                {resolvedNavLinks.map((link, index) => (
                   <motion.div
                     key={link.href}
                     initial={{ opacity: 0, y: 20 }}
@@ -215,6 +211,7 @@ export default function SiteMenu({
                     <MenuLink
                       href={link.href}
                       label={link.label}
+                      external={link.external}
                       className={styles.navLink}
                       onClick={onClose}
                       showArrow

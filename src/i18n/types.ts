@@ -110,6 +110,10 @@ export type Dictionary = {
   };
   home: {
     hero: {
+      headline: string;
+      description: string;
+      ctaText: string;
+      ctaLink: string;
       categories: string[];
       tagline1: string;
       tagline2: string;
@@ -132,6 +136,7 @@ export type Dictionary = {
       label: string;
       headingLine1: string;
       headingLine2: string;
+      description: string;
       cards: WhyCard[];
     };
     services: {

@@ -131,6 +131,10 @@ export const ar: Dictionary = {
   },
   home: {
     hero: {
+      headline: "malamih",
+      description: "",
+      ctaText: "",
+      ctaLink: "/contact",
       categories: [
         "استراتيجية العلامة التجارية",
         "إنتاج المحتوى",
@@ -170,6 +174,7 @@ export const ar: Dictionary = {
       label: "لماذا malamih",
       headingLine1: "لماذا",
       headingLine2: "malamih؟",
+      description: "",
       cards: [
         {
           title: "الأعمال أولًا",

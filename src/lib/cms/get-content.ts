@@ -8,10 +8,17 @@ import type {
   CmsProject,
   CmsProjectGallery,
   ContactSettingsData,
+  SiteBranding,
   SiteContent,
   SiteMedia,
 } from "@/lib/cms/types";
+import { buildNavLinksFromMenu, buildTalkLinks } from "@/lib/cms/nav-links";
 import { parseJson, pick } from "@/lib/cms/utils";
+import { normalizeUploadUrl } from "@/lib/media-url";
+
+function mediaUrl(url: string | null | undefined): string {
+  return url ? normalizeUploadUrl(url) : "";
+}
 
 const DEFAULT_HERO_SLIDES = [
   {
@@ -121,8 +128,14 @@ function buildDictionary(
       ...staticBase.common,
       brand: {
         name: pick(
-          hero?.brandNameEn ?? staticBase.common.brand.name,
-          hero?.brandNameAr ?? staticAr.common.brand.name,
+          site?.websiteNameEn ||
+            hero?.headlineEn ||
+            hero?.brandNameEn ||
+            staticBase.common.brand.name,
+          site?.websiteNameAr ||
+            hero?.headlineAr ||
+            hero?.brandNameAr ||
+            staticAr.common.brand.name,
           locale,
         ),
         creative: pick(
@@ -196,6 +209,28 @@ function buildDictionary(
     },
     home: {
       hero: {
+        headline: pick(
+          hero?.headlineEn ||
+            site?.websiteNameEn ||
+            hero?.brandNameEn ||
+            staticBase.home.hero.headline,
+          hero?.headlineAr ||
+            site?.websiteNameAr ||
+            hero?.brandNameAr ||
+            staticAr.home.hero.headline,
+          locale,
+        ),
+        description: pick(
+          hero?.descriptionEn ?? staticBase.home.hero.description,
+          hero?.descriptionAr ?? staticAr.home.hero.description,
+          locale,
+        ),
+        ctaText: pick(
+          hero?.ctaTextEn ?? staticBase.home.hero.ctaText,
+          hero?.ctaTextAr ?? staticAr.home.hero.ctaText,
+          locale,
+        ),
+        ctaLink: hero?.ctaLink || staticBase.home.hero.ctaLink,
         categories: parseJson<string[]>(
           locale === "ar"
             ? (hero?.categoriesAr ?? "[]")
@@ -277,6 +312,11 @@ function buildDictionary(
         headingLine2: pick(
           why?.titleLine2En ?? staticBase.home.why.headingLine2,
           why?.titleLine2Ar ?? staticAr.home.why.headingLine2,
+          locale,
+        ),
+        description: pick(
+          why?.descriptionEn ?? staticBase.home.why.description,
+          why?.descriptionAr ?? staticAr.home.why.description,
           locale,
         ),
         cards: visibleWhyCards.map((card) => ({
@@ -445,8 +485,84 @@ function buildDictionary(
         contact?.addressAr ?? staticAr.site.address,
         locale,
       ),
-      social: staticBase.site.social,
+      social: buildSocialLabels(contact, staticBase, locale),
     },
+  };
+}
+
+function buildSocialLabels(
+  contact: Awaited<ReturnType<typeof fetchCmsData>>["contactSettings"],
+  staticBase: Dictionary,
+  locale: Locale,
+): Dictionary["site"]["social"] {
+  const socialLinks = parseJson<
+    { key: string; href: string; labelEn?: string; labelAr?: string }[]
+  >(contact?.socialLinks ?? "[]", []);
+
+  if (socialLinks.length === 0) {
+    return staticBase.site.social;
+  }
+
+  const labels = { ...staticBase.site.social };
+
+  for (const link of socialLinks) {
+    const key = link.key as keyof Dictionary["site"]["social"];
+    if (key in labels) {
+      labels[key] = pick(
+        link.labelEn ?? labels[key],
+        link.labelAr ?? labels[key],
+        locale,
+      );
+    }
+  }
+
+  return labels;
+}
+
+function buildBranding(
+  site: Awaited<ReturnType<typeof fetchCmsData>>["siteSettings"],
+): SiteBranding {
+  return {
+    logoUrl: mediaUrl(site?.logoUrl),
+    faviconUrl: mediaUrl(site?.faviconUrl),
+  };
+}
+
+function buildSiteNavigation(
+  locale: Locale,
+  staticBase: Dictionary,
+  site: Awaited<ReturnType<typeof fetchCmsData>>["siteSettings"],
+  contactSettings: ContactSettingsData,
+) {
+  const headerMenu = parseJson<
+    {
+      key?: string;
+      href: string;
+      labelEn?: string;
+      labelAr?: string;
+      visible?: boolean;
+      external?: boolean;
+    }[]
+  >(site?.headerMenuJson ?? "[]", []);
+  const footerLinks = parseJson<
+    {
+      key?: string;
+      href: string;
+      labelEn?: string;
+      labelAr?: string;
+      visible?: boolean;
+      external?: boolean;
+    }[]
+  >(site?.footerLinksJson ?? "[]", []);
+
+  return {
+    navLinks: buildNavLinksFromMenu(headerMenu, locale, staticBase.common.nav),
+    footerNavLinks: buildNavLinksFromMenu(
+      footerLinks.length > 0 ? footerLinks : headerMenu,
+      locale,
+      staticBase.common.nav,
+    ),
+    talkLinks: buildTalkLinks(contactSettings),
   };
 }
 
@@ -540,7 +656,7 @@ function buildMedia(
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((slide) => ({
             id: slide.id,
-            imageUrl: slide.imageUrl,
+            imageUrl: mediaUrl(slide.imageUrl),
             text: pick(slide.textEn, slide.textAr, locale),
             objectPosition: slide.objectPosition,
             sortOrder: slide.sortOrder,
@@ -564,7 +680,7 @@ function buildMedia(
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((slide) => ({
             id: slide.id,
-            imageUrl: slide.imageUrl,
+            imageUrl: mediaUrl(slide.imageUrl),
             alt: pick(slide.altEn, slide.altAr, locale),
             sortOrder: slide.sortOrder,
             visible: slide.visible,
@@ -584,7 +700,7 @@ function buildMedia(
       id: card.id,
       title: pick(card.titleEn, card.titleAr, locale),
       description: pick(card.descriptionEn, card.descriptionAr, locale),
-      imageUrl: card.imageUrl,
+      imageUrl: mediaUrl(card.imageUrl),
       sortOrder: card.sortOrder,
       visible: card.visible,
     }));
@@ -594,7 +710,7 @@ function buildMedia(
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((logo) => ({
       id: logo.id,
-      imageUrl: logo.imageUrl,
+      imageUrl: mediaUrl(logo.imageUrl),
       name: pick(logo.nameEn, logo.nameAr, locale),
       link: logo.link,
       sortOrder: logo.sortOrder,
@@ -630,7 +746,7 @@ function buildMedia(
     hero: { slides: heroSlides },
     commitment: { slides: commitmentSlides, stats: commitmentStats },
     why: {
-      videoUrl: data.whyConfig?.videoUrl || DEFAULT_WHY_VIDEO,
+      videoUrl: mediaUrl(data.whyConfig?.videoUrl) || DEFAULT_WHY_VIDEO,
       cards: whyCards,
     },
     logos,
@@ -641,7 +757,7 @@ function buildMedia(
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((member) => ({
           id: member.id,
-          imageUrl: member.imageUrl,
+          imageUrl: mediaUrl(member.imageUrl),
           name: pick(member.nameEn, member.nameAr, locale),
           position: pick(member.positionEn, member.positionAr, locale),
           sortOrder: member.sortOrder,
@@ -649,10 +765,10 @@ function buildMedia(
         })),
     },
     contact: {
-      heroImage: contactPage.heroImage ?? DEFAULT_CONTACT_HERO,
+      heroImage: mediaUrl(contactPage.heroImage) || DEFAULT_CONTACT_HERO,
       teamImages: [
         {
-          src: contactPage.teamImage0 ?? DEFAULT_TEAM_IMAGES[0],
+          src: mediaUrl(contactPage.teamImage0) || DEFAULT_TEAM_IMAGES[0],
           caption: pick(
             contactPage.teamCaption0En ?? staticBase.contact.team[0].caption,
             contactPage.teamCaption0Ar ?? staticBase.contact.team[0].caption,
@@ -665,7 +781,7 @@ function buildMedia(
           ),
         },
         {
-          src: contactPage.teamImage1 ?? DEFAULT_TEAM_IMAGES[1],
+          src: mediaUrl(contactPage.teamImage1) || DEFAULT_TEAM_IMAGES[1],
           caption: pick(
             contactPage.teamCaption1En ?? staticBase.contact.team[1].caption,
             contactPage.teamCaption1Ar ?? staticBase.contact.team[1].caption,
@@ -707,7 +823,7 @@ function buildProjects(
         timeline: project.timeline,
         year: project.year,
         liveUrl: project.projectUrl,
-        cardImage: project.coverImage || gallery.hero,
+        cardImage: mediaUrl(project.coverImage) || mediaUrl(gallery.hero),
         gallery,
         sections: parseJson(project.sectionsJson, {} as CmsProject["sections"]),
         clientName: project.clientName,
@@ -764,22 +880,30 @@ export async function getSiteContent(locale: Locale): Promise<SiteContent> {
   try {
     const data = await fetchCmsData();
     const staticBase = locale === "ar" ? staticAr : staticEn;
-
-    if (!data.heroConfig && data.projects.length === 0) {
-      return getStaticFallback(locale);
-    }
+    const contactSettings = buildContactSettings(
+      data.contactSettings,
+      locale,
+      staticBase,
+    );
+    const navigation = buildSiteNavigation(
+      locale,
+      staticBase,
+      data.siteSettings,
+      contactSettings,
+    );
 
     return {
       dictionary: buildDictionary(locale, staticBase, data),
       media: buildMedia(locale, data, staticBase),
       projects: buildProjects(data.projects, locale),
-      contactSettings: buildContactSettings(
-        data.contactSettings,
-        locale,
-        staticBase,
-      ),
+      contactSettings,
+      branding: buildBranding(data.siteSettings),
+      navLinks: navigation.navLinks,
+      footerNavLinks: navigation.footerNavLinks,
+      talkLinks: navigation.talkLinks,
     };
-  } catch {
+  } catch (error) {
+    console.error("[getSiteContent] Failed to load CMS data:", error);
     return getStaticFallback(locale);
   }
 }
@@ -882,6 +1006,23 @@ function getStaticFallback(locale: Locale): SiteContent {
       ],
       workingHours: "",
     },
+    branding: {
+      logoUrl: "",
+      faviconUrl: "",
+    },
+    navLinks: buildNavLinksFromMenu([], locale, dictionary.common.nav),
+    footerNavLinks: buildNavLinksFromMenu([], locale, dictionary.common.nav),
+    talkLinks: buildTalkLinks({
+      phones: [],
+      whatsappNumbers: [
+        { label: "+964 785 555 0510", url: "https://wa.me/9647855550510" },
+      ],
+      emails: ["info@malamih.net"],
+      address: dictionary.site.address,
+      mapsUrl: "https://maps.app.goo.gl/8TwNGxaDbShY2ZxH6",
+      socialLinks: [],
+      workingHours: "",
+    }),
   };
 }
 

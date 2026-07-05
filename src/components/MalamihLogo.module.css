@@ -6,6 +6,12 @@
   color: #ffffff;
 }
 
+.logoImage {
+  width: auto;
+  height: 22px;
+  object-fit: contain;
+}
+
 @media (max-width: 768px) {
   .logo {
     height: 20px;

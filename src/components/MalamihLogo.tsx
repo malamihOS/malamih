@@ -1,11 +1,26 @@
+import Image from "next/image";
 import styles from "./MalamihLogo.module.css";
 
 type MalamihLogoProps = {
   className?: string;
   color?: string;
+  src?: string;
 };
 
-export default function MalamihLogo({ className = "", color }: MalamihLogoProps) {
+export default function MalamihLogo({ className = "", color, src }: MalamihLogoProps) {
+  if (src) {
+    return (
+      <Image
+        src={src}
+        alt=""
+        width={120}
+        height={24}
+        className={`${styles.logo} ${styles.logoImage} ${className}`.trim()}
+        priority
+      />
+    );
+  }
+
   return (
     <svg
       className={`${styles.logo} ${className}`.trim()}

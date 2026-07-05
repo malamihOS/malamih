@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n/config";
 import { ORGANIZATION, SITE_URL } from "@/lib/seo/constants";
+import { buildFaviconMetadata } from "@/lib/seo/favicon";
 import { absoluteUrl, alternateUrls } from "@/lib/seo/urls";
 
 export type SeoInput = {
@@ -16,6 +17,7 @@ export type SeoInput = {
   publishedTime?: string;
   modifiedTime?: string;
   author?: string;
+  faviconUrl?: string;
 };
 
 export function buildMetadata(input: SeoInput): Metadata {
@@ -32,6 +34,7 @@ export function buildMetadata(input: SeoInput): Metadata {
     publishedTime,
     modifiedTime,
     author,
+    faviconUrl,
   } = input;
 
   const alternates = alternateUrls(path);
@@ -41,6 +44,7 @@ export function buildMetadata(input: SeoInput): Metadata {
     locale === "ar" ? ORGANIZATION.nameAr : ORGANIZATION.nameEn;
 
   return {
+    ...buildFaviconMetadata(faviconUrl),
     title,
     description,
     keywords: keywords.length > 0 ? keywords : undefined,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { normalizeUploadUrl } from "@/lib/media-url";
 
 type MediaPickerProps = {
   open: boolean;
@@ -60,15 +61,19 @@ export default function MediaPicker({ open, onClose, onSelect }: MediaPickerProp
                 type="button"
                 className="admin-media-picker-item"
                 onClick={() => {
-                  onSelect(file.url);
+                  onSelect(normalizeUploadUrl(file.url));
                   onClose();
                 }}
               >
                 {file.mimeType.startsWith("video/") ? (
-                  <video src={file.url} muted />
+                  <video src={normalizeUploadUrl(file.url)} muted />
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={file.url} alt={file.originalName} loading="lazy" />
+                  <img
+                    src={normalizeUploadUrl(file.url)}
+                    alt={file.originalName}
+                    loading="lazy"
+                  />
                 )}
                 <span>{file.originalName || file.url}</span>
               </button>

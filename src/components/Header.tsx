@@ -52,7 +52,7 @@ export default function Header({
 }: {
   variant?: "overlay" | "page" | "light";
 }) {
-  const { t, localizePath, contactSettings } = useLocale();
+  const { t, localizePath, contactSettings, branding } = useLocale();
   const primaryEmail = contactSettings.emails[0] ?? "info@malamih.net";
   const primaryWhatsApp = contactSettings.whatsappNumbers[0];
   const [menuOpen, setMenuOpen] = useState(false);
@@ -79,7 +79,7 @@ export default function Header({
             className={styles.logo}
             aria-label={t.common.brand.name}
           >
-            <MalamihLogo />
+            <MalamihLogo src={branding.logoUrl || undefined} />
           </Link>
 
           <div className={styles.actions}>

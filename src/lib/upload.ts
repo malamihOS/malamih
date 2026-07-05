@@ -9,6 +9,9 @@ import {
   resolveR2ObjectKey,
   uploadToR2,
 } from "@/lib/r2";
+import { normalizeUploadUrl } from "@/lib/media-url";
+
+export { normalizeUploadUrl };
 
 export const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 

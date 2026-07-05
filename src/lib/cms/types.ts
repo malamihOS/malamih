@@ -75,6 +75,18 @@ export type ContactSettingsData = {
   workingHours: string;
 };
 
+export type CmsNavLink = {
+  key: string;
+  href: string;
+  label: string;
+  external?: boolean;
+};
+
+export type SiteBranding = {
+  logoUrl: string;
+  faviconUrl: string;
+};
+
 export type SiteMedia = {
   hero: {
     slides: HeroSlideData[];
@@ -133,6 +145,10 @@ export type SiteContent = {
   media: SiteMedia;
   projects: CmsProject[];
   contactSettings: ContactSettingsData;
+  branding: SiteBranding;
+  navLinks: CmsNavLink[];
+  footerNavLinks: CmsNavLink[];
+  talkLinks: CmsNavLink[];
 };
 
 export type LocalizedSiteContent = SiteContent & {

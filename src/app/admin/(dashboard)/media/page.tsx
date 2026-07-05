@@ -5,6 +5,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 import { useToast } from "@/components/admin/ToastProvider";
 import { adminFetch } from "@/lib/admin-client";
+import { normalizeUploadUrl } from "@/lib/media-url";
 
 type MediaFile = {
   id: string;
@@ -75,8 +76,11 @@ export default function MediaLibraryPage() {
 
   async function copyUrl(url: string) {
     try {
+      const normalized = normalizeUploadUrl(url);
       await navigator.clipboard.writeText(
-        url.startsWith("http") ? url : `${window.location.origin}${url}`,
+        normalized.startsWith("http")
+          ? normalized
+          : `${window.location.origin}${normalized}`,
       );
       showToast("URL copied to clipboard", "success");
     } catch {
@@ -160,10 +164,14 @@ export default function MediaLibraryPage() {
                 <article key={file.id} className="admin-media-card">
                   <div className="admin-media-preview">
                     {isVideo ? (
-                      <video src={file.url} muted />
+                      <video src={normalizeUploadUrl(file.url)} muted />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={file.url} alt={file.altEn || file.originalName} loading="lazy" />
+                      <img
+                        src={normalizeUploadUrl(file.url)}
+                        alt={file.altEn || file.originalName}
+                        loading="lazy"
+                      />
                     )}
                   </div>
                   <div className="admin-media-meta">

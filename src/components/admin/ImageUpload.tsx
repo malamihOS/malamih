@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import MediaPicker from "@/components/admin/MediaPicker";
+import { normalizeUploadUrl } from "@/lib/media-url";
 
 type ImageUploadProps = {
   label?: string;
@@ -23,7 +24,8 @@ export default function ImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const isVideo = value.match(/\.(mp4|webm)(\?|$)/i) || value.includes("video");
+  const previewUrl = value ? normalizeUploadUrl(value) : "";
+  const isVideo = previewUrl.match(/\.(mp4|webm)(\?|$)/i) || value.includes("video");
 
   async function handleFile(file: File) {
     setUploading(true);
@@ -50,10 +52,10 @@ export default function ImageUpload({
       <div className="admin-image-preview">
         {value ? (
           isVideo ? (
-            <video src={value} controls muted />
+            <video src={previewUrl} controls muted />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={value} alt="" />
+            <img src={previewUrl} alt="" />
           )
         ) : (
           <div className="admin-image-preview-empty">No file</div>

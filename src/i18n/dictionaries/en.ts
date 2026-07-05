@@ -135,6 +135,10 @@ export const en: Dictionary = {
   },
   home: {
     hero: {
+      headline: "malamih",
+      description: "",
+      ctaText: "",
+      ctaLink: "/contact",
       categories: [
         "BRAND STRATEGY",
         "CONTENT PRODUCTION",
@@ -174,6 +178,7 @@ export const en: Dictionary = {
       label: "Why Malamih",
       headingLine1: "Why",
       headingLine2: "Malamih?",
+      description: "",
       cards: [
         {
           title: "Business First",

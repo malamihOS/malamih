@@ -19,6 +19,14 @@ function getR2RemotePattern() {
 const r2Pattern = getR2RemotePattern();
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/favicon.ico",
+        destination: "/icons/favicon.ico",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

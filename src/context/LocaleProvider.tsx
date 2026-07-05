@@ -10,7 +10,7 @@ import {
 import type { Locale } from "@/i18n/config";
 import { localizePath } from "@/i18n/navigation";
 import type { Dictionary } from "@/i18n/types";
-import type { ContactSettingsData, SiteContent, SiteMedia } from "@/lib/cms/types";
+import type { ContactSettingsData, SiteContent, SiteMedia, SiteBranding, CmsNavLink } from "@/lib/cms/types";
 
 type LocaleContextValue = {
   locale: Locale;
@@ -19,6 +19,10 @@ type LocaleContextValue = {
   media: SiteMedia;
   projects: SiteContent["projects"];
   contactSettings: ContactSettingsData;
+  branding: SiteBranding;
+  navLinks: CmsNavLink[];
+  footerNavLinks: CmsNavLink[];
+  talkLinks: CmsNavLink[];
   localizePath: (path: string) => string;
 };
 
@@ -46,6 +50,10 @@ export function LocaleProvider({
       media: content.media,
       projects: content.projects,
       contactSettings: content.contactSettings,
+      branding: content.branding,
+      navLinks: content.navLinks,
+      footerNavLinks: content.footerNavLinks,
+      talkLinks: content.talkLinks,
       localizePath: (path: string) => localizePath(path, locale),
     }),
     [content, locale],

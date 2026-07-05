@@ -1,5 +1,7 @@
 import {
   DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
@@ -13,8 +15,7 @@ export function isR2Configured(): boolean {
     process.env.R2_ACCOUNT_ID &&
       process.env.R2_ACCESS_KEY_ID &&
       process.env.R2_SECRET_ACCESS_KEY &&
-      process.env.R2_BUCKET_NAME &&
-      process.env.R2_PUBLIC_URL,
+      process.env.R2_BUCKET_NAME,
   );
 }
 
@@ -42,8 +43,7 @@ export function getUploadObjectKey(filename: string): string {
 }
 
 export function getPublicUploadUrl(filename: string): string {
-  const base = process.env.R2_PUBLIC_URL!.replace(/\/$/, "");
-  return `${base}/${getUploadObjectKey(filename)}`;
+  return `/uploads/${filename}`;
 }
 
 export async function uploadToR2(
@@ -51,14 +51,45 @@ export async function uploadToR2(
   body: Buffer,
   contentType: string,
 ): Promise<void> {
-  await getR2Client().send(
+  const bucket = process.env.R2_BUCKET_NAME!;
+  const client = getR2Client();
+
+  await client.send(
     new PutObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME!,
+      Bucket: bucket,
       Key: key,
       Body: body,
       ContentType: contentType || "application/octet-stream",
+      CacheControl: "public, max-age=31536000, immutable",
     }),
   );
+
+  await client.send(
+    new HeadObjectCommand({
+      Bucket: bucket,
+      Key: key,
+    }),
+  );
+}
+
+export async function getObjectFromR2(key: string) {
+  const response = await getR2Client().send(
+    new GetObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME!,
+      Key: key,
+    }),
+  );
+
+  if (!response.Body) {
+    throw new Error("Empty object body");
+  }
+
+  return {
+    body: response.Body,
+    contentType: response.ContentType ?? "application/octet-stream",
+    contentLength: response.ContentLength,
+    cacheControl: response.CacheControl,
+  };
 }
 
 export async function deleteFromR2(key: string): Promise<void> {
@@ -79,8 +110,12 @@ export async function deleteFromR2(key: string): Promise<void> {
 export function resolveR2ObjectKey(filename: string, url: string): string | null {
   if (!isR2Configured()) return null;
 
-  const publicBase = process.env.R2_PUBLIC_URL!.replace(/\/$/, "");
-  if (url.startsWith(`${publicBase}/`)) {
+  if (url.startsWith("/uploads/")) {
+    return getUploadObjectKey(filename);
+  }
+
+  const publicBase = process.env.R2_PUBLIC_URL?.replace(/\/$/, "");
+  if (publicBase && url.startsWith(`${publicBase}/`)) {
     return url.slice(publicBase.length + 1);
   }
 

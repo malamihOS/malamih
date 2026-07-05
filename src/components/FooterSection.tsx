@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLenis } from "lenis/react";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { useLocale } from "@/context/LocaleProvider";
-import { SITE_MAPS_URL, SOCIAL_LINKS, TALK_LINKS } from "@/data/site";
+import { SITE_MAPS_URL } from "@/data/site";
 import styles from "./FooterSection.module.css";
 
 const MARQUEE_REPEAT = 4;
@@ -130,15 +130,12 @@ function MarqueeGroup({
 }
 
 export default function FooterSection() {
-  const { t, localizePath } = useLocale();
+  const { t, localizePath, footerNavLinks, talkLinks, contactSettings } = useLocale();
 
-  const navLinks = [
-    { label: t.common.nav.home, href: localizePath("/") },
-    { label: t.common.nav.projects, href: localizePath("/projects") },
-    { label: t.common.nav.blog, href: localizePath("/blog") },
-    { label: t.common.nav.services, href: `${localizePath("/")}#services` },
-    { label: t.common.nav.contact, href: localizePath("/contact") },
-  ];
+  const navLinks = footerNavLinks.map((link) => ({
+    label: link.label,
+    href: link.external ? link.href : localizePath(link.href),
+  }));
 
   const priorityLinks = [
     {
@@ -157,11 +154,11 @@ export default function FooterSection() {
         <div className={styles.inner}>
           <div className={styles.topRow}>
             <div className={styles.socialRow}>
-              {SOCIAL_LINKS.map((link) => (
+              {contactSettings.socialLinks.map((link) => (
                 <FooterLink
                   key={link.key}
                   href={link.href}
-                  label={t.site.social[link.key]}
+                  label={link.label}
                   external
                 />
               ))}
@@ -180,7 +177,7 @@ export default function FooterSection() {
             </div>
 
             <div className={styles.navCol}>
-              <NavColumn title={t.common.footer.letsTalk} links={TALK_LINKS} />
+              <NavColumn title={t.common.footer.letsTalk} links={talkLinks} />
               <NavColumn title={t.common.footer.navigation} links={navLinks} />
               <NavColumn title={t.common.footer.priority} links={priorityLinks} />
             </div>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdmin, type AdminSession } from "@/lib/auth";
 import {
   hasPermission,
@@ -32,6 +33,11 @@ export async function withAdmin(
   }
 }
 
+export function revalidatePublicSite() {
+  revalidatePath("/", "layout");
+  revalidatePath("/ar", "layout");
+}
+
 export async function withAdminMutation(
   request: Request,
   handler: (session: AdminSession) => Promise<Response>,
@@ -40,7 +46,11 @@ export async function withAdminMutation(
   if (!isValidOrigin(request)) {
     return NextResponse.json({ error: "Invalid origin" }, { status: 403 });
   }
-  return withAdmin(handler, permission);
+  const response = await withAdmin(handler, permission);
+  if (response.ok) {
+    revalidatePublicSite();
+  }
+  return response;
 }
 
 export function jsonError(message: string, status = 400) {
