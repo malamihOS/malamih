@@ -3,13 +3,21 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+function disablePublicTransitions() {
+  delete document.documentElement.dataset.pageTransition;
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+}
+
 export default function DisableAdminPageTransitions() {
   const pathname = usePathname();
 
   useEffect(() => {
-    delete document.documentElement.dataset.pageTransition;
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
+    disablePublicTransitions();
+  }, []);
+
+  useEffect(() => {
+    disablePublicTransitions();
   }, [pathname]);
 
   return null;

@@ -121,11 +121,16 @@ export default async function AdminDashboardPage() {
           )}
         </div>
 
-        {navSections.map((section) => (
+        {navSections.map((section, index) => (
           <section key={section.id} className="admin-dashboard-section">
             <div className="admin-dashboard-section-head">
-              <h2 className="admin-dashboard-section-title">{section.title}</h2>
-              <p className="admin-dashboard-section-desc">{section.description}</p>
+              <span className="admin-dashboard-section-badge">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <div className="admin-dashboard-section-copy">
+                <h2 className="admin-dashboard-section-title">{section.title}</h2>
+                <p className="admin-dashboard-section-desc">{section.description}</p>
+              </div>
             </div>
             <div className="admin-dashboard-grid">
               {section.items.map((item) => (
