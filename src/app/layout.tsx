@@ -133,13 +133,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${interDisplay.variable} ${janna2.variable} h-full`} suppressHydrationWarning>
       <head>
+        <TrackingScripts />
         <script
           dangerouslySetInnerHTML={{
             __html:
               "history.scrollRestoration='manual';window.scrollTo(0,0);",
           }}
         />
-        <TrackingScripts />
       </head>
       <body className="min-h-full antialiased">
         <PageTransitionProvider />
