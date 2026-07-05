@@ -32,6 +32,7 @@ export default function HeroSection() {
   const [ready, setReady] = useState(false);
   const [slide3Phase, setSlide3Phase] = useState<Slide3Phase>("idle");
   const [showText, setShowText] = useState(false);
+  const [slidesSettled, setSlidesSettled] = useState(false);
 
   const regularSlides = slides.slice(0, -1);
   const slide3 = slides[slides.length - 1];
@@ -66,6 +67,7 @@ export default function HeroSection() {
   return (
     <section
       className={styles.hero}
+      data-slides-settled={slidesSettled || undefined}
       onDragStart={(event) => event.preventDefault()}
     >
       <div className={styles.slidesStage}>
@@ -112,6 +114,10 @@ export default function HeroSection() {
             onAnimationComplete={() => {
               if (slide3Phase === "rise") {
                 setSlide3Phase("expand");
+                return;
+              }
+              if (slide3Phase === "expand") {
+                setSlidesSettled(true);
               }
             }}
           >
@@ -127,6 +133,8 @@ export default function HeroSection() {
             />
           </motion.div>
         ) : null}
+
+        <div className={styles.progressiveBlur} aria-hidden />
       </div>
 
       <div className={styles.overlay} aria-hidden />
@@ -179,8 +187,6 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-
-      <div className={styles.progressiveBlur} aria-hidden />
     </section>
   );
 }
