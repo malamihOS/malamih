@@ -75,7 +75,7 @@ export default function LeadMagnetsAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Lead Magnets" />
+      <AdminHeader title="Lead Magnets" subtitle="Downloadable resources and gated content." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

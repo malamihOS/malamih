@@ -81,7 +81,7 @@ export default function ContactSettingsPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Contact Settings" />
+        <AdminHeader title="Contact Settings" subtitle="Address, email, phone, and social links." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -89,7 +89,7 @@ export default function ContactSettingsPage() {
 
   return (
     <>
-      <AdminHeader title="Contact Settings" />
+      <AdminHeader title="Contact Settings" subtitle="Address, email, phone, and social links." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

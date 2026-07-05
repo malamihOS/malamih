@@ -4,43 +4,22 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
+import { ADMIN_NAV_SECTIONS, getNavPermission } from "@/lib/admin-nav";
 import {
-  NAV_PERMISSIONS,
   hasPermission,
   getRoleLabel,
   type AdminRole,
-  type Permission,
 } from "@/lib/permissions";
-
-const NAV_ITEMS: { href: string; label: string; exact?: boolean }[] = [
-  { href: "/admin", label: "Dashboard", exact: true },
-  { href: "/admin/hero", label: "Hero" },
-  { href: "/admin/why", label: "Why Malamih" },
-  { href: "/admin/logos", label: "Client Logos" },
-  { href: "/admin/team", label: "Team" },
-  { href: "/admin/projects", label: "Projects" },
-  { href: "/admin/blog", label: "Blog" },
-  { href: "/admin/services", label: "Services" },
-  { href: "/admin/seo", label: "Page SEO" },
-  { href: "/admin/media", label: "Media Library" },
-  { href: "/admin/contact", label: "Contact Settings" },
-  { href: "/admin/messages", label: "Messages" },
-  { href: "/admin/leads", label: "Leads CRM" },
-  { href: "/admin/newsletter", label: "Newsletter" },
-  { href: "/admin/lead-magnets", label: "Lead Magnets" },
-  { href: "/admin/proposals", label: "Proposals" },
-  { href: "/admin/landing-pages", label: "Landing Pages" },
-  { href: "/admin/analytics", label: "Analytics" },
-  { href: "/admin/integrations", label: "Integrations" },
-  { href: "/admin/export", label: "Backup & Export" },
-  { href: "/admin/settings", label: "Site Settings" },
-  { href: "/admin/users", label: "Users" },
-];
 
 type AdminSidebarProps = {
   role?: AdminRole;
   email?: string;
 };
+
+function isActive(pathname: string, href: string, exact?: boolean) {
+  if (exact) return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function AdminSidebar({ role = "admin", email }: AdminSidebarProps) {
   const pathname = usePathname();
@@ -58,11 +37,14 @@ export default function AdminSidebar({ role = "admin", email }: AdminSidebarProp
     }
   }, [email]);
 
-  const visibleItems = NAV_ITEMS.filter((item) => {
-    const permission = NAV_PERMISSIONS[item.href] as Permission | undefined;
-    if (!permission) return true;
-    return hasPermission(role, permission);
-  });
+  const sections = ADMIN_NAV_SECTIONS.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      const permission = getNavPermission(item.href);
+      if (!permission) return true;
+      return hasPermission(role, permission);
+    }),
+  })).filter((section) => section.items.length > 0);
 
   async function handleLogout() {
     await fetch("/api/admin/auth/logout", { method: "POST" });
@@ -74,40 +56,49 @@ export default function AdminSidebar({ role = "admin", email }: AdminSidebarProp
     <aside className="admin-sidebar">
       <div className="admin-sidebar-brand">
         <AdminBrandLogo href="/admin" />
+        <p className="admin-sidebar-brand-label">Admin panel</p>
       </div>
+
       {sessionEmail ? (
         <div className="admin-sidebar-user">
           <span className="admin-sidebar-user-email">{sessionEmail}</span>
           <span className="admin-sidebar-user-role">{getRoleLabel(role)}</span>
         </div>
       ) : null}
+
       <nav className="admin-sidebar-nav" aria-label="Admin navigation">
-        {visibleItems.map((item) => {
-          const active = item.exact
-            ? pathname === item.href
-            : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`admin-sidebar-link${active ? " active" : ""}`}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
+        {sections.map((section) => (
+          <div key={section.id} className="admin-sidebar-section">
+            <div className="admin-sidebar-section-head">
+              <p className="admin-sidebar-section-title">{section.title}</p>
+              <p className="admin-sidebar-section-desc">{section.description}</p>
+            </div>
+            <div className="admin-sidebar-section-items">
+              {section.items.map((item) => {
+                const active = isActive(pathname, item.href, item.exact);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`admin-sidebar-link${active ? " active" : ""}`}
+                    title={item.description}
+                  >
+                    <span className="admin-sidebar-link-label">{item.label}</span>
+                    {item.description ? (
+                      <span className="admin-sidebar-link-desc">{item.description}</span>
+                    ) : null}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
+
       <div className="admin-sidebar-footer">
         <button
           type="button"
-          className="admin-sidebar-link"
-          style={{
-            width: "100%",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            textAlign: "left",
-          }}
+          className="admin-sidebar-logout"
           onClick={handleLogout}
         >
           Log out

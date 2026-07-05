@@ -102,7 +102,7 @@ export default function IntegrationsPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Integrations" />
+        <AdminHeader title="Integrations" subtitle="Gmail, tracking pixels, and third-party tags." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -110,7 +110,7 @@ export default function IntegrationsPage() {
 
   return (
     <>
-      <AdminHeader title="Integrations & Email" />
+      <AdminHeader title="Integrations & Email" subtitle="Gmail, tracking pixels, and third-party tags." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

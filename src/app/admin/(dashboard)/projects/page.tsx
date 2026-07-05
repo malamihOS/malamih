@@ -10,7 +10,7 @@ export default async function ProjectsListPage() {
 
   return (
     <>
-      <AdminHeader title="Projects">
+      <AdminHeader title="Projects" subtitle="Portfolio items and case studies.">
         <Link href="/admin/projects/new" className="admin-btn admin-btn-primary admin-btn-sm">
           New project
         </Link>

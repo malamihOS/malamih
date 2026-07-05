@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Analytics" />
+        <AdminHeader title="Analytics" subtitle="Traffic, page views, and conversion events." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -58,7 +58,7 @@ export default function AnalyticsPage() {
   if (error || !data) {
     return (
       <>
-        <AdminHeader title="Analytics" />
+        <AdminHeader title="Analytics" subtitle="Traffic, page views, and conversion events." />
         <div className="admin-content">
           <div className="admin-alert admin-alert-error">{error ?? "No data"}</div>
         </div>
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
 
   return (
     <>
-      <AdminHeader title="Analytics" />
+      <AdminHeader title="Analytics" subtitle="Traffic, page views, and conversion events." />
       <div className="admin-content">
         {!data.summary.trackingConfigured ? (
           <div className="admin-alert admin-alert-warning">

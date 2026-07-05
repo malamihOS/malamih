@@ -83,7 +83,7 @@ export default function UsersPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Users" />
+        <AdminHeader title="Users" subtitle="Admin accounts and access roles." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -92,7 +92,7 @@ export default function UsersPage() {
   if (error) {
     return (
       <>
-        <AdminHeader title="Users" />
+        <AdminHeader title="Users" subtitle="Admin accounts and access roles." />
         <div className="admin-content">
           <div className="admin-alert admin-alert-error">{error}</div>
         </div>
@@ -102,7 +102,7 @@ export default function UsersPage() {
 
   return (
     <>
-      <AdminHeader title="Users" />
+      <AdminHeader title="Users" subtitle="Admin accounts and access roles." />
       <div className="admin-content">
         <div className="admin-card">
           <h2 className="admin-card-title">Admin users</h2>

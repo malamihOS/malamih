@@ -105,7 +105,7 @@ export default function SiteSettingsPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Site Settings" />
+        <AdminHeader title="Site Settings" subtitle="Brand name, navigation, footer, and global options." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -113,7 +113,7 @@ export default function SiteSettingsPage() {
 
   return (
     <>
-      <AdminHeader title="Site Settings" />
+      <AdminHeader title="Site Settings" subtitle="Brand name, navigation, footer, and global options." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

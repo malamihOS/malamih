@@ -42,7 +42,7 @@ export default function ProposalsAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Proposal Requests" />
+      <AdminHeader title="Proposal Requests" subtitle="Incoming proposal and quote requests." />
       <div className="admin-content">
         {loading ? (
           <p>Loading…</p>

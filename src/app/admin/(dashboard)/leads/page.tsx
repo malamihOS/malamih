@@ -44,7 +44,7 @@ export default function LeadsListPage() {
 
   return (
     <>
-      <AdminHeader title="Leads CRM" />
+      <AdminHeader title="Leads CRM" subtitle="Pipeline, scoring, and follow-up reminders." />
       <div className="admin-content">
         <div className="admin-form-actions" style={{ marginTop: 0, marginBottom: "1rem" }}>
           <Link href="/admin/leads/new" className="admin-btn admin-btn-primary admin-btn-sm">

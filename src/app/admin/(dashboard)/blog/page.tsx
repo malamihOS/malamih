@@ -10,7 +10,7 @@ export default async function AdminBlogPage() {
 
   return (
     <>
-      <AdminHeader title="Blog Posts">
+      <AdminHeader title="Blog Posts" subtitle="Articles, categories, and publishing.">
         <Link href="/admin/blog/new" className="admin-btn admin-btn-primary admin-btn-sm">
           New post
         </Link>

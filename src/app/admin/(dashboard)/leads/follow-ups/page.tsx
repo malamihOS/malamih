@@ -44,7 +44,7 @@ export default function FollowUpsPage() {
 
   return (
     <>
-      <AdminHeader title="Follow-up Reminders" />
+      <AdminHeader title="Follow-up Reminders" subtitle="Upcoming and overdue lead follow-ups." />
       <div className="admin-content">
         <p className="admin-inline-hint">
           Upcoming and overdue follow-ups. Email/WhatsApp reminders require future integration setup.

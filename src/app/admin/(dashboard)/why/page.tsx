@@ -145,7 +145,7 @@ export default function WhyAdminPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Why Malamih" />
+        <AdminHeader title="Why Malamih" subtitle="Value proposition section on the homepage." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -153,7 +153,7 @@ export default function WhyAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Why Malamih" />
+      <AdminHeader title="Why Malamih" subtitle="Value proposition section on the homepage." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

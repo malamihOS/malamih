@@ -41,7 +41,7 @@ export default function MessagesListPage() {
 
   return (
     <>
-      <AdminHeader title="Messages" />
+      <AdminHeader title="Messages" subtitle="Contact form submissions from the website." />
       <div className="admin-content">
         <div className="admin-filter-bar">
           <label className="admin-label" style={{ margin: 0 }}>Filter:</label>

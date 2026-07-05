@@ -159,7 +159,7 @@ export default function HeroAdminPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Hero Section" />
+        <AdminHeader title="Hero Section" subtitle="Headline, slides, and call-to-action on the homepage." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -167,7 +167,7 @@ export default function HeroAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Hero Section" />
+      <AdminHeader title="Hero Section" subtitle="Headline, slides, and call-to-action on the homepage." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

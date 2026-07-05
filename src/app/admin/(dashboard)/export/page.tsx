@@ -26,7 +26,7 @@ export default function ExportPage() {
 
   return (
     <>
-      <AdminHeader title="Backup & Export" />
+      <AdminHeader title="Backup & Export" subtitle="Download a snapshot of CMS and growth data." />
       <div className="admin-content">
         <div className="admin-card">
           <h2 className="admin-card-title">Export data</h2>

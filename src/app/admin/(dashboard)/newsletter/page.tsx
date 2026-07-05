@@ -31,7 +31,7 @@ export default function NewsletterAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Newsletter" />
+      <AdminHeader title="Newsletter" subtitle="Email subscribers and list management." />
       <div className="admin-content">
         <p className="admin-inline-hint">
           Marketing emails are not sent automatically unless SMTP is configured in Integrations.

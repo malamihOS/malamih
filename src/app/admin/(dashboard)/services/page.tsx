@@ -100,7 +100,7 @@ export default function ServicesAdminPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Services" />
+        <AdminHeader title="Services" subtitle="Service cards, tags, and descriptions." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -108,7 +108,7 @@ export default function ServicesAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Services">
+      <AdminHeader title="Services" subtitle="Service cards, tags, and descriptions.">
         <button
           type="button"
           className="admin-btn admin-btn-primary admin-btn-sm"

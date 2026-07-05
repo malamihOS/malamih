@@ -100,7 +100,7 @@ export default function TeamAdminPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Team" />
+        <AdminHeader title="Team" subtitle="Team members section on the homepage." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -108,7 +108,7 @@ export default function TeamAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Team">
+      <AdminHeader title="Team" subtitle="Team members section on the homepage.">
         <SaveButton label="Save all" loading={saving} type="button" onClick={() => void saveAll()} />
       </AdminHeader>
       <div className="admin-content">

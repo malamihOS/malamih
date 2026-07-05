@@ -93,7 +93,7 @@ export default function LogosAdminPage() {
   if (loading) {
     return (
       <>
-        <AdminHeader title="Client Logos" />
+        <AdminHeader title="Client Logos" subtitle="Logo marquee displayed on the homepage." />
         <div className="admin-content">Loading…</div>
       </>
     );
@@ -101,7 +101,7 @@ export default function LogosAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Client Logos">
+      <AdminHeader title="Client Logos" subtitle="Logo marquee displayed on the homepage.">
         <button
           type="button"
           className="admin-btn admin-btn-primary admin-btn-sm"

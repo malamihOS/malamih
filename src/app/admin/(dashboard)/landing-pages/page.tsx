@@ -77,7 +77,7 @@ export default function LandingPagesAdminPage() {
 
   return (
     <>
-      <AdminHeader title="Landing Pages" />
+      <AdminHeader title="Landing Pages" subtitle="Campaign and marketing landing pages." />
       <div className="admin-content">
         <form onSubmit={handleSave}>
           <div className="admin-card">

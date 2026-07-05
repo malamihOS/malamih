@@ -1,19 +1,18 @@
 import Link from "next/link";
 import AdminHeader from "@/components/admin/AdminHeader";
+import { ADMIN_NAV_SECTIONS } from "@/lib/admin-nav";
 import { prisma } from "@/lib/prisma";
 
-const MODULES = [
-  { href: "/admin/leads", title: "Leads CRM", desc: "Pipeline, scoring & follow-ups" },
-  { href: "/admin/messages", title: "Messages", desc: "Contact form submissions" },
-  { href: "/admin/newsletter", title: "Newsletter", desc: "Email subscribers" },
-  { href: "/admin/proposals", title: "Proposals", desc: "Proposal requests" },
-  { href: "/admin/lead-magnets", title: "Lead Magnets", desc: "Downloadable resources" },
-  { href: "/admin/landing-pages", title: "Landing Pages", desc: "Campaign landing pages" },
-  { href: "/admin/hero", title: "Hero", desc: "Homepage hero section & slides" },
-  { href: "/admin/blog", title: "Blog", desc: "Blog posts & categories" },
-  { href: "/admin/analytics", title: "Analytics", desc: "Visits, pages & submissions" },
-  { href: "/admin/export", title: "Backup & Export", desc: "Export CMS & growth data" },
-];
+const QUICK_STATS = [
+  { key: "leads", label: "Total leads", href: "/admin/leads", cta: "Open CRM" },
+  { key: "newLeads", label: "New leads (7 days)" },
+  { key: "hot", label: "Hot leads" },
+  { key: "messages", label: "New messages", href: "/admin/messages", cta: "View inbox" },
+  { key: "newsletter", label: "Newsletter subscribers" },
+  { key: "proposals", label: "Proposal requests" },
+  { key: "followUps", label: "Upcoming follow-ups", href: "/admin/leads/follow-ups", cta: "Reminders" },
+  { key: "overdue", label: "Overdue follow-ups", warn: true },
+] as const;
 
 export default async function AdminDashboardPage() {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -49,6 +48,17 @@ export default async function AdminDashboardPage() {
     }),
   ]);
 
+  const statValues: Record<(typeof QUICK_STATS)[number]["key"], number> = {
+    leads: totalLeads,
+    newLeads: newLeadsWeek,
+    hot: hotLeads,
+    messages: contactSubmissions,
+    newsletter: newsletterActive,
+    proposals: proposalRequests,
+    followUps: upcomingFollowUps,
+    overdue: overdueFollowUps,
+  };
+
   const serviceCounts: Record<string, number> = {};
   const sourceCounts: Record<string, number> = {};
   for (const lead of leads) {
@@ -58,81 +68,76 @@ export default async function AdminDashboardPage() {
         serviceCounts[s] = (serviceCounts[s] ?? 0) + 1;
       }
     } catch {
-      // skip
+      // skip invalid JSON
     }
   }
 
   const topService = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1])[0];
   const topSource = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0];
 
+  const navSections = ADMIN_NAV_SECTIONS.filter((section) => section.id !== "overview");
+
   return (
     <>
-      <AdminHeader title="Dashboard" />
+      <AdminHeader
+        title="Dashboard"
+        subtitle="Overview of leads, messages, and quick access to every admin section."
+      />
       <div className="admin-content">
         <div className="admin-card">
-          <h2 className="admin-card-title">Growth overview</h2>
-          <div className="admin-grid admin-grid-3">
-            <div>
-              <p className="admin-inline-hint">Total leads</p>
-              <p className="admin-stat">{totalLeads}</p>
-              <Link href="/admin/leads" className="admin-btn admin-btn-secondary admin-btn-sm">
-                View CRM
-              </Link>
-            </div>
-            <div>
-              <p className="admin-inline-hint">New leads (7 days)</p>
-              <p className="admin-stat">{newLeadsWeek}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Hot leads</p>
-              <p className="admin-stat">{hotLeads}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">New messages</p>
-              <p className="admin-stat">{contactSubmissions}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Newsletter subscribers</p>
-              <p className="admin-stat">{newsletterActive}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Proposal requests</p>
-              <p className="admin-stat">{proposalRequests}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Upcoming follow-ups</p>
-              <p className="admin-stat">{upcomingFollowUps}</p>
-              <Link href="/admin/leads/follow-ups" className="admin-btn admin-btn-secondary admin-btn-sm">
-                View reminders
-              </Link>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Overdue follow-ups</p>
-              <p className="admin-stat">{overdueFollowUps}</p>
-            </div>
-            <div>
-              <p className="admin-inline-hint">Top service</p>
-              <p className="admin-stat" style={{ fontSize: "1.25rem" }}>
-                {topService ? `${topService[0]} (${topService[1]})` : "—"}
-              </p>
-            </div>
+          <div className="admin-card-head">
+            <h2 className="admin-card-title">Growth overview</h2>
+            <p className="admin-card-desc">Key numbers from the last 7 days and your CRM pipeline.</p>
           </div>
-          {topSource ? (
-            <p className="admin-inline-hint" style={{ marginTop: "1rem" }}>
-              Top lead source: {topSource[0]} ({topSource[1]} leads)
-            </p>
-          ) : null}
+          <div className="admin-stat-grid">
+            {QUICK_STATS.map((stat) => (
+              <div
+                key={stat.key}
+                className={`admin-stat-tile${"warn" in stat && stat.warn && statValues[stat.key] > 0 ? " admin-stat-tile-warn" : ""}`}
+              >
+                <p className="admin-stat-tile-label">{stat.label}</p>
+                <p className="admin-stat-tile-value">{statValues[stat.key]}</p>
+                {"href" in stat && stat.href ? (
+                  <Link href={stat.href} className="admin-stat-tile-link">
+                    {stat.cta}
+                  </Link>
+                ) : null}
+              </div>
+            ))}
+          </div>
+          {(topService || topSource) && (
+            <div className="admin-insight-row">
+              {topService ? (
+                <p className="admin-inline-hint">
+                  Top service interest: <strong>{topService[0]}</strong> ({topService[1]} leads)
+                </p>
+              ) : null}
+              {topSource ? (
+                <p className="admin-inline-hint">
+                  Top lead source: <strong>{topSource[0]}</strong> ({topSource[1]} leads)
+                </p>
+              ) : null}
+            </div>
+          )}
         </div>
 
-        <h2 className="admin-card-title">Modules</h2>
-        <div className="admin-dashboard-grid">
-          {MODULES.map((mod) => (
-            <Link key={mod.href} href={mod.href} className="admin-dashboard-card">
-              <h3>{mod.title}</h3>
-              <p>{mod.desc}</p>
-            </Link>
-          ))}
-        </div>
+        {navSections.map((section) => (
+          <section key={section.id} className="admin-dashboard-section">
+            <div className="admin-dashboard-section-head">
+              <h2 className="admin-dashboard-section-title">{section.title}</h2>
+              <p className="admin-dashboard-section-desc">{section.description}</p>
+            </div>
+            <div className="admin-dashboard-grid">
+              {section.items.map((item) => (
+                <Link key={item.href} href={item.href} className="admin-dashboard-card">
+                  <span className="admin-dashboard-card-kicker">{section.title}</span>
+                  <h3>{item.label}</h3>
+                  <p>{item.description}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </>
   );

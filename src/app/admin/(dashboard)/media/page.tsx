@@ -120,7 +120,7 @@ export default function MediaLibraryPage() {
 
   return (
     <>
-      <AdminHeader title="Media Library" />
+      <AdminHeader title="Media Library" subtitle="Uploaded images and files for the website." />
       <div className="admin-content">
         <div className="admin-card">
           <div className="admin-form-actions" style={{ marginTop: 0 }}>
