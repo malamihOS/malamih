@@ -6,6 +6,7 @@ import {
   withAdminMutation,
   jsonError,
 } from "@/lib/admin-route";
+import { normalizeGmailIntegration } from "@/lib/gmail-smtp";
 
 const integrationsSchema = z.object({
   smtpHost: z.string(),
@@ -52,7 +53,15 @@ export async function PUT(request: Request) {
       }
 
       const existing = await prisma.siteSettings.findFirst();
-      const data = parsed.data;
+      const data = normalizeGmailIntegration(parsed.data);
+
+      if (data.smtpEnabled && !data.smtpFromEmail) {
+        return jsonError("Gmail address is required when email is enabled");
+      }
+
+      if (data.smtpEnabled && !data.smtpPass && !existing?.smtpPass) {
+        return jsonError("Google App Password is required when email is enabled");
+      }
 
       if (existing && !data.smtpPass && existing.smtpPass) {
         data.smtpPass = existing.smtpPass;

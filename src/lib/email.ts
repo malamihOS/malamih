@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { isGmailSmtpConfig } from "@/lib/gmail-smtp";
 import { prisma } from "@/lib/prisma";
 
 type SmtpConfig = {
@@ -12,18 +13,42 @@ type SmtpConfig = {
 
 async function getSmtpConfig(): Promise<SmtpConfig | null> {
   const settings = await prisma.siteSettings.findFirst();
-  if (!settings?.smtpEnabled || !settings.smtpHost || !settings.smtpFromEmail) {
+  const fromEmail = settings?.smtpFromEmail?.trim() ?? "";
+  const user = settings?.smtpUser?.trim() || fromEmail;
+
+  if (!settings?.smtpEnabled || !fromEmail || !user) {
     return null;
   }
 
   return {
     host: settings.smtpHost,
     port: settings.smtpPort || 587,
-    user: settings.smtpUser,
+    user,
     pass: settings.smtpPass,
-    fromEmail: settings.smtpFromEmail,
+    fromEmail,
     fromName: settings.smtpFromName || "Malamih Creative Company",
   };
+}
+
+function createTransporter(config: SmtpConfig) {
+  if (isGmailSmtpConfig(config.host)) {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: config.user,
+        pass: config.pass,
+      },
+    });
+  }
+
+  return nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.port === 465,
+    auth: config.user
+      ? { user: config.user, pass: config.pass }
+      : undefined,
+  });
 }
 
 async function sendMail(options: {
@@ -37,14 +62,7 @@ async function sendMail(options: {
     return { sent: false, reason: "SMTP not configured" };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: config.host,
-    port: config.port,
-    secure: config.port === 465,
-    auth: config.user
-      ? { user: config.user, pass: config.pass }
-      : undefined,
-  });
+  const transporter = createTransporter(config);
 
   await transporter.sendMail({
     from: `"${config.fromName}" <${config.fromEmail}>`,

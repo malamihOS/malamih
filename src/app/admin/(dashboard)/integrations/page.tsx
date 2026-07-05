@@ -5,6 +5,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import FormField from "@/components/admin/FormField";
 import SaveButton from "@/components/admin/SaveButton";
 import { adminFetch } from "@/lib/admin-client";
+import { GMAIL_SMTP_HOST, GMAIL_SMTP_PORT } from "@/lib/gmail-smtp";
 
 type IntegrationsSettings = {
   smtpHost: string;
@@ -25,8 +26,8 @@ type IntegrationsSettings = {
 };
 
 const EMPTY: IntegrationsSettings = {
-  smtpHost: "",
-  smtpPort: 587,
+  smtpHost: GMAIL_SMTP_HOST,
+  smtpPort: GMAIL_SMTP_PORT,
   smtpUser: "",
   smtpPass: "",
   smtpFromEmail: "",
@@ -84,7 +85,13 @@ export default function IntegrationsPage() {
 
     const { error: saveError } = await adminFetch("/api/admin/integrations", {
       method: "PUT",
-      body: JSON.stringify(settings),
+      body: JSON.stringify({
+        ...settings,
+        smtpHost: GMAIL_SMTP_HOST,
+        smtpPort: GMAIL_SMTP_PORT,
+        smtpUser: settings.smtpFromEmail.trim().toLowerCase(),
+        smtpFromEmail: settings.smtpFromEmail.trim().toLowerCase(),
+      }),
     });
 
     if (saveError) setError(saveError);
@@ -151,9 +158,10 @@ export default function IntegrationsPage() {
           </div>
 
           <div className="admin-card">
-            <h2 className="admin-card-title">SMTP email</h2>
+            <h2 className="admin-card-title">Gmail email</h2>
             <p className="admin-inline-hint">
-              Emails are only sent when SMTP is enabled and configured. Contact form notifications and auto-replies use these settings.
+              Use your Google Workspace or Gmail address with a Google App Password.
+              Contact form notifications and auto-replies are sent through Gmail SMTP.
             </p>
             <label className="admin-checkbox-label">
               <input
@@ -161,44 +169,33 @@ export default function IntegrationsPage() {
                 checked={settings.smtpEnabled}
                 onChange={(e) => update("smtpEnabled", e.target.checked)}
               />
-              Enable SMTP
+              Enable Gmail email sending
             </label>
             <FormField
-              label="SMTP host"
-              value={settings.smtpHost}
-              onChange={(v) => update("smtpHost", v)}
-            />
-            <FormField
-              label="SMTP port"
-              value={String(settings.smtpPort)}
-              onChange={(v) => update("smtpPort", Number(v) || 587)}
-            />
-            <FormField
-              label="SMTP username"
-              value={settings.smtpUser}
-              onChange={(v) => update("smtpUser", v)}
-            />
-            <FormField
-              label="SMTP password"
-              value={settings.smtpPass}
-              onChange={(v) => update("smtpPass", v)}
-              hint="Leave blank to keep existing password"
-            />
-            <FormField
-              label="From email"
+              label="Gmail address"
+              type="email"
               value={settings.smtpFromEmail}
               onChange={(v) => update("smtpFromEmail", v)}
+              hint="e.g. info@malamih.net or your @gmail.com address"
+            />
+            <FormField
+              label="Google App Password"
+              type="password"
+              value={settings.smtpPass}
+              onChange={(v) => update("smtpPass", v)}
+              hint="16-character App Password from Google Account → Security → 2-Step Verification → App passwords. Leave blank to keep the saved password."
             />
             <FormField
               label="From name"
               value={settings.smtpFromName}
               onChange={(v) => update("smtpFromName", v)}
+              hint="Shown to recipients, e.g. Malamih Creative Company"
             />
             <FormField
               label="Admin notification email"
               value={settings.notifyEmail}
               onChange={(v) => update("notifyEmail", v)}
-              hint="Receives new contact form submissions"
+              hint="Receives new contact form submissions. Can be the same Gmail address or another inbox."
             />
           </div>
 
