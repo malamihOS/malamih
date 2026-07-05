@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { createPageMetadata } from "@/i18n/metadata";
 import {
-  getAllProjectSlugs,
   getProjectBySlug,
   getRelatedProjects,
 } from "@/data/projects";
@@ -12,11 +11,7 @@ type ProjectPageProps = {
 };
 
 export const dynamic = "force-dynamic";
-
-export async function generateStaticParams() {
-  const slugs = await getAllProjectSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: ProjectPageProps) {
   const { slug } = await params;

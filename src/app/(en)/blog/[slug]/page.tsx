@@ -1,16 +1,12 @@
 import { notFound } from "next/navigation";
 import { createBlogMetadata, createPageMetadata } from "@/i18n/metadata";
-import { getAllPublishedBlogSlugs, getBlogPostBySlug } from "@/lib/blog/get-posts";
+import { getBlogPostBySlug } from "@/lib/blog/get-posts";
 import BlogDetailPageView from "@/views/BlogDetailPageView";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export const dynamic = "force-dynamic";
-
-export async function generateStaticParams() {
-  const slugs = await getAllPublishedBlogSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+export const revalidate = 0;
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;

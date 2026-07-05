@@ -118,6 +118,9 @@ const janna2 = localFont({
   display: "swap",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateMetadata(): Promise<Metadata> {
   return createSiteMetadata("en");
 }

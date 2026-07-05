@@ -85,7 +85,7 @@ export default function TeamSection() {
                     src={member.imageUrl}
                     alt={member.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
                     className={styles.image}
                   />
                 </div>

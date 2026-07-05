@@ -114,11 +114,18 @@ Use this checklist before going live. Check each item manually in both English a
 
 ## Deployment check
 
-- [ ] `DATABASE_URL` configured for production database
+- [ ] `DATABASE_URL` configured for MySQL (`mysql://user:pass@localhost:3306/dbname`)
 - [ ] `NEXT_PUBLIC_SITE_URL` set to production domain
+- [ ] `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` set in cPanel env
+- [ ] `npm install` completed on server
+- [ ] `npx prisma generate` completed
 - [ ] `npx prisma migrate deploy` run on production
-- [ ] Seed run once on fresh database (if needed)
-- [ ] `public/uploads/` directory writable
+- [ ] Seed commands run once on fresh database (if needed)
+- [ ] `npm run build` completed on server
+- [ ] cPanel Node.js App startup file set to `server.js`
+- [ ] cPanel Node.js App restarted after deploy
+- [ ] `public/uploads/` directory writable (`chmod 755`)
+- [ ] Uploaded files accessible at `/uploads/filename`
 - [ ] HTTPS enabled (required for secure cookies)
 - [ ] 404 page displays for unknown routes
 - [ ] 500/error fallback page displays on server errors

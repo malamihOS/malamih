@@ -4,6 +4,9 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { canAccessPath } from "@/lib/permissions";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminDashboardLayout({
   children,
 }: {
