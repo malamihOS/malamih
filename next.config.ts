@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
         source: "/favicon.ico",
         destination: "/icons/favicon.ico",
       },
+      {
+        source: "/manifest.json",
+        destination: "/icons/manifest.json",
+      },
     ];
   },
   images: {

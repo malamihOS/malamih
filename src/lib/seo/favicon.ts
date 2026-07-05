@@ -12,6 +12,31 @@ export const FAVICON_METADATA: Pick<
       { url: `${ICONS}/favicon-32x32.png`, sizes: "32x32", type: "image/png" },
       { url: `${ICONS}/favicon-96x96.png`, sizes: "96x96", type: "image/png" },
       {
+        url: `${ICONS}/android-icon-36x36.png`,
+        sizes: "36x36",
+        type: "image/png",
+      },
+      {
+        url: `${ICONS}/android-icon-48x48.png`,
+        sizes: "48x48",
+        type: "image/png",
+      },
+      {
+        url: `${ICONS}/android-icon-72x72.png`,
+        sizes: "72x72",
+        type: "image/png",
+      },
+      {
+        url: `${ICONS}/android-icon-96x96.png`,
+        sizes: "96x96",
+        type: "image/png",
+      },
+      {
+        url: `${ICONS}/android-icon-144x144.png`,
+        sizes: "144x144",
+        type: "image/png",
+      },
+      {
         url: `${ICONS}/android-icon-192x192.png`,
         sizes: "192x192",
         type: "image/png",
@@ -19,7 +44,12 @@ export const FAVICON_METADATA: Pick<
     ],
     shortcut: `${ICONS}/favicon.ico`,
     apple: [
-      { url: `${ICONS}/apple-icon-57x57.png`, sizes: "57x57", type: "image/png" },
+      { url: `${ICONS}/apple-icon.png`, type: "image/png" },
+      {
+        url: `${ICONS}/apple-icon-57x57.png`,
+        sizes: "57x57",
+        type: "image/png",
+      },
       { url: `${ICONS}/apple-icon-60x60.png`, sizes: "60x60", type: "image/png" },
       { url: `${ICONS}/apple-icon-72x72.png`, sizes: "72x72", type: "image/png" },
       { url: `${ICONS}/apple-icon-76x76.png`, sizes: "76x76", type: "image/png" },
@@ -48,6 +78,10 @@ export const FAVICON_METADATA: Pick<
         sizes: "180x180",
         type: "image/png",
       },
+      {
+        url: `${ICONS}/apple-icon-precomposed.png`,
+        type: "image/png",
+      },
     ],
   },
   manifest: `${ICONS}/manifest.json`,
@@ -58,22 +92,3 @@ export const FAVICON_METADATA: Pick<
     "msapplication-config": `${ICONS}/browserconfig.xml`,
   },
 };
-
-export function buildFaviconMetadata(
-  faviconUrl?: string | null,
-): Pick<Metadata, "icons" | "manifest" | "themeColor" | "other"> {
-  if (!faviconUrl) {
-    return FAVICON_METADATA;
-  }
-
-  return {
-    icons: {
-      icon: [{ url: faviconUrl }],
-      shortcut: faviconUrl,
-      apple: [{ url: faviconUrl }],
-    },
-    manifest: FAVICON_METADATA.manifest,
-    themeColor: FAVICON_METADATA.themeColor,
-    other: FAVICON_METADATA.other,
-  };
-}

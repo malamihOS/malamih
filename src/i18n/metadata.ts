@@ -73,7 +73,6 @@ export async function createPageMetadata(
         ? pageSeo?.canonicalUrlAr || undefined
         : pageSeo?.canonicalUrlEn || undefined,
     noIndex: pageSeo?.noIndex ?? false,
-    faviconUrl: siteSettings?.faviconUrl,
   });
 
   return { ...meta, ...overrides };
@@ -155,6 +154,5 @@ export async function createSiteMetadata(locale: Locale): Promise<Metadata> {
     path: "/",
     title: content.dictionary.meta.site.title,
     description: content.dictionary.meta.site.description,
-    faviconUrl: (await prisma.siteSettings.findFirst().catch(() => null))?.faviconUrl,
   });
 }
