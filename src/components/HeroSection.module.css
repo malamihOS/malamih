@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   overflow: hidden;
   background: #000000;
   user-select: none;
@@ -30,6 +30,7 @@
 
 .slideImage {
   object-fit: cover;
+  object-position: center;
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
@@ -44,8 +45,7 @@
     180deg,
     rgba(0, 0, 0, 0.15) 0%,
     rgba(0, 0, 0, 0.05) 35%,
-    rgba(0, 0, 0, 0.2) 65%,
-    rgba(0, 0, 0, 0.5) 100%
+    rgba(0, 0, 0, 0.35) 100%
   );
   pointer-events: none;
   z-index: 4;
@@ -57,7 +57,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: 100svh;
   padding: 160px var(--brog-gutter) 72px;
   pointer-events: none;
 }
@@ -139,19 +139,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 360px;
+  height: 200px;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.88) 22%,
-    rgba(0, 0, 0, 0.62) 48%,
-    rgba(0, 0, 0, 0.28) 72%,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 40%,
     transparent 100%
   );
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  mask-image: linear-gradient(to top, black 12%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, black 12%, transparent 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to top, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%);
   pointer-events: none;
   z-index: 6;
 }
