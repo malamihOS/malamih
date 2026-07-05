@@ -18,8 +18,8 @@ export async function createPageMetadata(
 ): Promise<Metadata> {
   const [content, pageSeo, siteSettings] = await Promise.all([
     getSiteContent(locale),
-    getPageSeo(page),
-    prisma.siteSettings.findFirst(),
+    getPageSeo(page).catch(() => null),
+    prisma.siteSettings.findFirst().catch(() => null),
   ]);
 
   const staticMeta =

@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { unlink } from "fs/promises";
-import path from "path";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { UPLOAD_DIR } from "@/lib/upload";
+import { deleteUploadFile } from "@/lib/upload";
 import {
   withAdmin,
   withAdminMutation,
@@ -58,9 +56,9 @@ export async function DELETE(request: Request, context: RouteContext) {
       if (!media) return jsonError("File not found", 404);
 
       try {
-        await unlink(path.join(UPLOAD_DIR, media.filename));
+        await deleteUploadFile(media);
       } catch {
-        // File may already be removed from disk
+        // File may already be removed from storage
       }
 
       await prisma.mediaFile.delete({ where: { id } });

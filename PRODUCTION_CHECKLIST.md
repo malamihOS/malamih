@@ -112,24 +112,30 @@ Use this checklist before going live. Check each item manually in both English a
 - [ ] Input sanitization on contact form
 - [ ] SMTP password stored only in database/env, not in client code
 
-## Deployment check
+## Deployment check (Railway + PostgreSQL + R2)
 
-- [ ] `DATABASE_URL` configured for MySQL (`mysql://user:pass@localhost:3306/dbname`)
-- [ ] `NEXT_PUBLIC_SITE_URL` set to production domain
-- [ ] `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` set in cPanel env
-- [ ] `npm install` completed on server
-- [ ] `npx prisma generate` completed
-- [ ] `npx prisma migrate deploy` run on production
+- [ ] Railway project created with PostgreSQL plugin
+- [ ] `DATABASE_URL` linked from Railway PostgreSQL (`postgresql://…`)
+- [ ] `NEXT_PUBLIC_SITE_URL` set to production domain (https)
+- [ ] `SESSION_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` set in Railway variables
+- [ ] Cloudflare R2 bucket created and API token configured
+- [ ] `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_URL` set
+- [ ] R2 public domain or r2.dev URL serves uploaded files
+- [ ] `npm install` / build succeeds on Railway
+- [ ] `npx prisma migrate deploy` run on production database
 - [ ] Seed commands run once on fresh database (if needed)
-- [ ] `npm run build` completed on server
-- [ ] cPanel Node.js App startup file set to `server.js`
-- [ ] cPanel Node.js App restarted after deploy
-- [ ] `public/uploads/` directory writable (`chmod 755`)
-- [ ] Uploaded files accessible at `/uploads/filename`
-- [ ] HTTPS enabled (required for secure cookies)
+- [ ] `npm run build` completes on Railway
+- [ ] Railway start command: `npm run start` (`server.js` uses `PORT`)
+- [ ] Custom domain connected and HTTPS active
+- [ ] Media upload stores files in R2 (not local disk) in production
+- [ ] Media delete removes R2 objects
 - [ ] 404 page displays for unknown routes
-- [ ] 500/error fallback page displays on server errors
 - [ ] README and `.env.example` reviewed for completeness
+
+### Legacy cPanel (optional)
+
+- [ ] MySQL `DATABASE_URL` on cPanel if using archived MySQL migration branch
+- [ ] `public/uploads/` writable for legacy local upload deployments
 
 ---
 
