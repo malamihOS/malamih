@@ -60,6 +60,9 @@ export default function ServicesSection() {
                   <span className={styles.number}>{service.number}</span>
                   <div className={styles.main}>
                     <h3 className={styles.title}>{service.title}</h3>
+                    {service.description ? (
+                      <p className={styles.description}>{service.description}</p>
+                    ) : null}
                   </div>
                 </div>
 

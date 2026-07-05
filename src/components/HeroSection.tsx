@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useSiteMedia, useTranslations } from "@/context/LocaleProvider";
@@ -37,6 +37,10 @@ export default function HeroSection() {
   const regularSlides = slides.slice(0, -1);
   const slide3 = slides[slides.length - 1];
   const slide3Anim = (slide3?.animation ?? {}) as HeroSlideAnimation;
+  const heroDescription = t.home.hero.description.trim();
+  const heroTaglineLines = heroDescription
+    ? heroDescription.split("\n").filter(Boolean)
+    : [t.home.hero.tagline1, t.home.hero.tagline2].filter(Boolean);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -180,9 +184,12 @@ export default function HeroSection() {
               animate={showText ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
               transition={textTransition(0.2)}
             >
-              {t.home.hero.tagline1}
-              <br />
-              {t.home.hero.tagline2}
+              {heroTaglineLines.map((line, index) => (
+                <Fragment key={`${line}-${index}`}>
+                  {index > 0 ? <br /> : null}
+                  {line}
+                </Fragment>
+              ))}
             </motion.p>
           </div>
         </div>

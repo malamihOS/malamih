@@ -191,6 +191,9 @@ export default function HeroAdminPage() {
               onArChange={(v) => updateConfig("descriptionAr", v)}
               multiline
             />
+            <p className="admin-inline-hint">
+              Shown in the hero tagline area (bottom right). Leave empty to use Tagline 1 and Tagline 2 instead.
+            </p>
             <BilingualField
               label="CTA Text"
               enName="ctaTextEn"

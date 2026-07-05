@@ -3,6 +3,7 @@ import type { LegalSection } from "@/data/legal/types";
 export type ServiceItem = {
   number: string;
   title: string;
+  description?: string;
   tags: string[];
 };
 

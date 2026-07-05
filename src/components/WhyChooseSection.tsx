@@ -58,6 +58,10 @@ export default function WhyChooseSection() {
             {t.home.why.headingLine2}
           </h2>
 
+          {t.home.why.description ? (
+            <p className={styles.intro}>{t.home.why.description}</p>
+          ) : null}
+
           <div className={styles.videoWrap}>
             <video
               className={styles.video}
@@ -72,7 +76,10 @@ export default function WhyChooseSection() {
         </motion.div>
 
         <div className={styles.cards}>
-          {t.home.why.cards.map((card, index) => (
+          {t.home.why.cards.map((card, index) => {
+            const mediaCard = why.cards[index];
+
+            return (
             <motion.article
               key={card.title}
               className={styles.card}
@@ -83,15 +90,24 @@ export default function WhyChooseSection() {
             >
               <div className={styles.cardHeader}>
                 <span className={styles.cardIcon} aria-hidden="true">
-                  <svg viewBox="0 0 256 256" focusable="false">
-                    {CARD_ICONS[index]}
-                  </svg>
+                  {mediaCard?.imageUrl ? (
+                    <img
+                      src={mediaCard.imageUrl}
+                      alt=""
+                      className={styles.cardImage}
+                    />
+                  ) : (
+                    <svg viewBox="0 0 256 256" focusable="false">
+                      {CARD_ICONS[index % CARD_ICONS.length]}
+                    </svg>
+                  )}
                 </span>
                 <h3 className={styles.cardTitle}>{card.title}</h3>
               </div>
               <p className={styles.cardDescription}>{card.description}</p>
             </motion.article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

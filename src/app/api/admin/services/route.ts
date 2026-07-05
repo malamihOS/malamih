@@ -43,7 +43,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  return withAdmin(async () => {
+  return withAdminMutation(request, async () => {
     let body: unknown;
     try {
       body = await request.json();
@@ -103,7 +103,7 @@ export async function PUT(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  return withAdmin(async () => {
+  return withAdminMutation(request, async () => {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
     if (!id) {

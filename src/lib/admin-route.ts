@@ -34,8 +34,25 @@ export async function withAdmin(
 }
 
 export function revalidatePublicSite() {
-  revalidatePath("/", "layout");
-  revalidatePath("/ar", "layout");
+  const paths = [
+    "/",
+    "/ar",
+    "/contact",
+    "/ar/contact",
+    "/projects",
+    "/ar/projects",
+    "/blog",
+    "/ar/blog",
+    "/legal/terms-and-conditions",
+    "/ar/legal/terms-and-conditions",
+    "/legal/privacy-policy",
+    "/ar/legal/privacy-policy",
+  ];
+
+  for (const path of paths) {
+    revalidatePath(path, "layout");
+    revalidatePath(path, "page");
+  }
 }
 
 export async function withAdminMutation(

@@ -330,6 +330,7 @@ function buildDictionary(
         items: visibleServices.map((service) => ({
           number: service.number,
           title: pick(service.titleEn, service.titleAr, locale),
+          description: pick(service.descriptionEn, service.descriptionAr, locale),
           tags: parseJson<string[]>(
             locale === "ar" ? service.tagsAr : service.tagsEn,
             [],

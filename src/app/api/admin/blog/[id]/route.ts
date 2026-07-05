@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { withAdmin, jsonError } from "@/lib/admin-route";
+import { withAdmin, withAdminMutation, jsonError } from "@/lib/admin-route";
 
 const blogSchema = z.object({
   slug: z.string().min(1),
@@ -62,7 +62,7 @@ export async function GET(_request: Request, context: RouteContext) {
 }
 
 export async function PUT(request: Request, context: RouteContext) {
-  return withAdmin(async () => {
+  return withAdminMutation(request, async () => {
     const { id } = await context.params;
     let body: unknown;
     try {
@@ -84,8 +84,8 @@ export async function PUT(request: Request, context: RouteContext) {
   });
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
-  return withAdmin(async () => {
+export async function DELETE(request: Request, context: RouteContext) {
+  return withAdminMutation(request, async () => {
     const { id } = await context.params;
     await prisma.blogPost.delete({ where: { id } });
     return NextResponse.json({ ok: true });
