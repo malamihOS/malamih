@@ -1,0 +1,152 @@
+.section {
+  padding: 48px var(--brog-gutter) 120px;
+  background: var(--brog-dark);
+  color: var(--brog-white);
+}
+
+.inner {
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.category {
+  color: var(--brog-white);
+}
+
+.date,
+.author {
+  color: var(--brog-muted);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.excerpt {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--brog-muted);
+}
+
+.heroImageWrap {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #111111;
+}
+
+.heroImage {
+  object-fit: cover;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tagsLabel {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brog-muted);
+}
+
+.tag {
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  color: var(--brog-white);
+}
+
+.cta {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+}
+
+.ctaText {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--brog-muted);
+}
+
+.ctaButton {
+  align-self: flex-start;
+  padding: 10px 24px;
+  border: 2px solid var(--brog-white);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--brog-white);
+}
+
+.ctaButton:hover {
+  background: var(--brog-white);
+  color: #000000;
+}
+
+.related {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.relatedTitle {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+@media (max-width: 768px) {
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+}

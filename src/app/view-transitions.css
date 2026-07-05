@@ -1,0 +1,55 @@
+html[data-page-transition] {
+  background: #000000;
+  overflow: hidden !important;
+  height: 100%;
+}
+
+html[data-page-transition] body {
+  overflow: hidden;
+}
+
+html.lenis.lenis-stopped[data-page-transition] {
+  overflow: hidden !important;
+}
+
+html[data-page-transition] [data-page-root] {
+  will-change: transform, opacity;
+}
+
+html[data-page-transition="exit"] [data-page-root] {
+  animation: page-content-exit 0.6s cubic-bezier(0.73, 0, 0.33, 1) both;
+}
+
+html[data-page-transition="enter"] [data-page-root] {
+  animation: page-content-enter 0.6s cubic-bezier(0.73, 0, 0.33, 1) 0.5s both;
+}
+
+@keyframes page-content-exit {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-30%);
+  }
+}
+
+@keyframes page-content-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(30%);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-page-transition] [data-page-root] {
+    animation: none !important;
+  }
+}

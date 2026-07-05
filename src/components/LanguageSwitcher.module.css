@@ -1,0 +1,47 @@
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.link {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--brog-muted);
+  transition: color 0.25s ease;
+}
+
+.link:hover,
+.link.active {
+  color: var(--brog-white);
+}
+
+.divider {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.light .link {
+  color: rgba(10, 10, 10, 0.55);
+}
+
+.light .link:hover,
+.light .link.active {
+  color: #0a0a0a;
+}
+
+.light .divider {
+  color: rgba(10, 10, 10, 0.25);
+}
+
+@media (max-width: 768px) {
+  .link,
+  .divider {
+    font-size: 12px;
+  }
+}

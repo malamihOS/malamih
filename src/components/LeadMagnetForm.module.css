@@ -1,0 +1,43 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+}
+
+.input {
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.button,
+.downloadBtn {
+  align-self: flex-start;
+  padding: 12px 24px;
+  border: 1px solid var(--brog-white, #fff);
+  border-radius: 999px;
+  background: var(--brog-white, #fff);
+  color: var(--brog-dark, #111);
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.error {
+  color: #ff6b6b;
+  margin: 0;
+}
+
+.success {
+  margin: 0 0 12px;
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}

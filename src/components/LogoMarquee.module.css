@@ -1,0 +1,114 @@
+.brands {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.mask {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgb(0, 0, 0) 12.5%,
+    rgb(0, 0, 0) 87.5%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgb(0, 0, 0) 12.5%,
+    rgb(0, 0, 0) 87.5%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  flex-shrink: 0;
+  animation: marqueeLeft 28s linear infinite;
+  will-change: transform;
+}
+
+.trackReverse {
+  animation-name: marqueeRight;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.logoItem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 48px;
+}
+
+.logoImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  opacity: 0.85;
+}
+
+.logoImage svg {
+  height: 22px;
+  width: auto;
+}
+
+.clientLogo {
+  height: 22px;
+  width: auto;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+/* 4 identical groups → move 1 group width (25%) = seamless loop */
+@keyframes marqueeLeft {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-25%, 0, 0);
+  }
+}
+
+@keyframes marqueeRight {
+  from {
+    transform: translate3d(-25%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .group[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .logoImage,
+  .logoImage svg {
+    height: 18px;
+  }
+}

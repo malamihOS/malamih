@@ -1,0 +1,277 @@
+.page {
+  background: #000000;
+  max-width: var(--brog-container);
+  margin: 0 auto;
+  padding: 0 var(--brog-gutter) 120px;
+}
+
+.hero {
+  padding: 32px 0 48px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1fr minmax(240px, 320px);
+  gap: 48px;
+  align-items: start;
+}
+
+.heroMain {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 34ch;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(48px, 6.5vw, 84px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  color: var(--brog-white);
+}
+
+.summary {
+  margin: 0;
+  font-size: clamp(16px, 1.25vw, 20px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--brog-muted);
+}
+
+.liveButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-start;
+  padding: 8px 16px;
+  border: 2px solid var(--brog-white);
+  border-radius: 100px;
+  background: var(--brog-white);
+  color: #000000;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.liveButton:hover {
+  background: transparent;
+  color: var(--brog-white);
+}
+
+.liveIcon {
+  display: flex;
+  width: 16px;
+  height: 16px;
+  transform: rotate(-45deg);
+}
+
+.liveIcon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.metaList {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.metaItem {
+  display: grid;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.metaItem dt {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brog-muted);
+}
+
+.metaItem dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--brog-white);
+}
+
+.metaDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.heroImageWrap {
+  margin-bottom: 80px;
+}
+
+.imageFrame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #111111;
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.heroImage {
+  width: 100%;
+  aspect-ratio: 1280 / 1242;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.contentBlock {
+  display: grid;
+  grid-template-columns: minmax(120px, 220px) 1fr;
+  gap: 32px 48px;
+  align-items: start;
+}
+
+.blockLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brog-muted);
+}
+
+.blockBody {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 62ch;
+}
+
+.blockHeading {
+  margin: 0;
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--brog-white);
+}
+
+.blockText {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.blockText p {
+  margin: 0;
+  font-size: clamp(16px, 1.15vw, 18px);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  color: var(--brog-muted);
+}
+
+.mosaicOne,
+.mosaicTwo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mosaicStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mosaicTall {
+  width: 100%;
+  aspect-ratio: 632 / 736;
+}
+
+.mosaicSmall {
+  width: 100%;
+  aspect-ratio: 632 / 360;
+}
+
+.wideImageWrap {
+  width: 100%;
+}
+
+.wideImage {
+  width: 100%;
+  aspect-ratio: 1280 / 512;
+}
+
+@media (max-width: 1024px) {
+  .page {
+    padding-bottom: 100px;
+  }
+
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .heroMain {
+    max-width: none;
+  }
+
+  .contentBlock {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 0 24px 80px;
+  }
+
+  .hero {
+    padding-top: 16px;
+  }
+
+  .heroImageWrap {
+    margin-bottom: 56px;
+  }
+
+  .body {
+    gap: 56px;
+  }
+
+  .mosaicOne,
+  .mosaicTwo {
+    grid-template-columns: 1fr;
+  }
+
+  .mosaicTwo {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mosaicTwo .mosaicStack {
+    order: 2;
+  }
+
+  .mosaicTwo .mosaicTall {
+    order: 1;
+  }
+
+  .heroImage {
+    aspect-ratio: 4 / 5;
+  }
+}

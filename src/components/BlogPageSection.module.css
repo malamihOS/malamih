@@ -1,0 +1,129 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px var(--brog-gutter) 120px;
+  background: var(--brog-dark);
+  color: var(--brog-white);
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  width: 100%;
+  max-width: var(--brog-container);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 24px;
+  width: 100%;
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.sectionLabel {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--brog-muted);
+}
+
+.sectionNumber {
+  color: var(--brog-white);
+}
+
+.heading {
+  margin: 0;
+  padding-bottom: 20px;
+  font-size: clamp(56px, 11vw, 148px);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.95;
+  text-align: center;
+  color: var(--brog-white);
+}
+
+.description {
+  margin: 0 auto;
+  max-width: 720px;
+  font-size: 16px;
+  line-height: 1.7;
+  text-align: center;
+  color: var(--brog-muted);
+}
+
+.featured {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.featuredLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brog-muted);
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filterChip {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--brog-muted);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.filterChip:hover,
+.filterActive {
+  border-color: var(--brog-white);
+  color: var(--brog-white);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 48px 32px;
+}
+
+@media (max-width: 1024px) {
+  .featuredGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,120 @@
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 16px var(--brog-gutter);
+}
+
+.headerMenuOpen {
+  position: fixed;
+}
+
+.headerPage {
+  position: relative;
+  background: #000000;
+}
+
+.headerLight {
+  position: relative;
+  background: #ffffff;
+}
+
+.headerLight .logo {
+  color: #0a0a0a;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--brog-container);
+  margin: 0 auto;
+  height: 48px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  color: var(--brog-white);
+}
+
+.actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.nav {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.contactItem {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contactLabel {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.42px;
+  line-height: 16.8px;
+  color: var(--brog-white);
+}
+
+.contactLink {
+  display: block;
+  overflow: hidden;
+  height: 16.8px;
+}
+
+.swapText {
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.swapLine {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.42px;
+  line-height: 16.8px;
+  color: var(--brog-muted);
+}
+
+.contactLink:hover .swapText {
+  transform: translateY(-50%);
+}
+
+.contactLink:hover .swapLine {
+  color: var(--brog-white);
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 24px;
+  }
+
+  .actions {
+    gap: 16px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .contactLabel,
+  .swapLine {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .actions {
+    gap: 0;
+  }
+}

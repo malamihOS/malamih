@@ -1,0 +1,88 @@
+.card {
+  min-width: 0;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thumbnail {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 628 / 660;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #111111;
+}
+
+.cardImage {
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cardLink:hover .cardImage {
+  transform: scale(1.04);
+}
+
+.cardMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.category {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--brog-muted);
+}
+
+.titleRow,
+.yearRow {
+  overflow: hidden;
+  height: 28px;
+}
+
+.titleRow {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 28px;
+  color: var(--brog-white);
+}
+
+.yearRow {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 28px;
+  color: var(--brog-muted);
+}
+
+.swapText {
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.swapLine {
+  display: block;
+}
+
+.cardLink:hover .swapText {
+  transform: translateY(-50%);
+}
+
+@media (max-width: 768px) {
+  .imageWrap {
+    aspect-ratio: 4 / 5;
+  }
+}

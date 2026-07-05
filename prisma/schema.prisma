@@ -1,0 +1,470 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String   @default("")
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ipAddress String   @default("")
+  success   Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model MediaFile {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String   @default("")
+  url          String
+  mimeType     String   @default("")
+  size         Int      @default(0)
+  width        Int?
+  height       Int?
+  altEn        String   @default("")
+  altAr        String   @default("")
+  uploadedBy   String   @default("")
+  createdAt    DateTime @default(now())
+}
+
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  eventType  String   @default("page_view")
+  path       String
+  locale     String   @default("en")
+  referrer   String   @default("") @db.Text
+  userAgent  String   @default("") @db.Text
+  deviceType String   @default("desktop")
+  sessionId  String   @default("")
+  createdAt  DateTime @default(now())
+}
+
+model HeroConfig {
+  id            Int    @id @default(1)
+  headlineEn    String @default("")
+  headlineAr    String @default("")
+  descriptionEn String @default("")
+  descriptionAr String @default("")
+  ctaTextEn     String @default("")
+  ctaTextAr     String @default("")
+  ctaLink       String @default("")
+  tagline1En    String @default("")
+  tagline1Ar    String @default("")
+  tagline2En    String @default("")
+  tagline2Ar    String @default("")
+  categoriesEn  String @default("[]") @db.Text
+  categoriesAr  String @default("[]") @db.Text
+  brandNameEn   String @default("malamih")
+  brandNameAr   String @default("malamih")
+  brandCreativeEn String @default("Creative")
+  brandCreativeAr String @default("إبداعي")
+}
+
+model HeroSlide {
+  id             String  @id @default(cuid())
+  imageUrl       String
+  textEn         String  @default("")
+  textAr         String  @default("")
+  objectPosition String  @default("center")
+  sortOrder      Int     @default(0)
+  visible        Boolean @default(true)
+  animationJson  String  @default("{}") @db.Text
+}
+
+model WhyMalamihConfig {
+  id            Int    @id @default(1)
+  labelEn       String @default("")
+  labelAr       String @default("")
+  titleLine1En  String @default("")
+  titleLine1Ar  String @default("")
+  titleLine2En  String @default("")
+  titleLine2Ar  String @default("")
+  descriptionEn String @default("")
+  descriptionAr String @default("")
+  videoUrl      String @default("")
+  commitmentHeadingEn String @default("")
+  commitmentHeadingAr String @default("")
+  commitmentDescEn    String @default("")
+  commitmentDescAr    String @default("")
+  marqueeLabelEn      String @default("")
+  marqueeLabelAr      String @default("")
+}
+
+model WhyMalamihSlide {
+  id        String  @id @default(cuid())
+  imageUrl  String
+  altEn     String  @default("")
+  altAr     String  @default("")
+  sortOrder Int     @default(0)
+  visible   Boolean @default(true)
+}
+
+model WhyMalamihStat {
+  id        String  @id @default(cuid())
+  value     Int
+  suffix    String  @default("")
+  labelEn   String  @default("")
+  labelAr   String  @default("")
+  sortOrder Int     @default(0)
+  visible   Boolean @default(true)
+}
+
+model WhyMalamihCard {
+  id            String  @id @default(cuid())
+  titleEn       String  @default("")
+  titleAr       String  @default("")
+  descriptionEn String  @default("")
+  descriptionAr String  @default("")
+  imageUrl      String  @default("")
+  sortOrder     Int     @default(0)
+  visible       Boolean @default(true)
+}
+
+model ClientLogo {
+  id        String  @id @default(cuid())
+  imageUrl  String
+  nameEn    String  @default("")
+  nameAr    String  @default("")
+  link      String  @default("")
+  sortOrder Int     @default(0)
+  visible   Boolean @default(true)
+}
+
+model TeamConfig {
+  id        Int     @id @default(1)
+  labelEn   String  @default("Our Team")
+  labelAr   String  @default("فريقنا")
+  headingEn String  @default("Meet the Team")
+  headingAr String  @default("تعرف على الفريق")
+  visible   Boolean @default(true)
+}
+
+model TeamMember {
+  id         String  @id @default(cuid())
+  imageUrl   String
+  nameEn     String  @default("")
+  nameAr     String  @default("")
+  positionEn String  @default("")
+  positionAr String  @default("")
+  sortOrder  Int     @default(0)
+  visible    Boolean @default(true)
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  titleEn         String
+  titleAr         String
+  shortDescEn     String   @default("") @db.Text
+  shortDescAr     String   @default("") @db.Text
+  categoryEn      String   @default("")
+  categoryAr      String   @default("")
+  industryEn      String   @default("")
+  industryAr      String   @default("")
+  spaceOfWorkEn   String   @default("")
+  spaceOfWorkAr   String   @default("")
+  timeline        String   @default("")
+  clientName      String   @default("")
+  servicesUsed    String   @default("[]") @db.Text
+  year            String   @default("")
+  projectUrl      String   @default("")
+  coverImage      String   @default("")
+  galleryJson     String   @default("{}") @db.Text
+  sectionsJson    String   @default("{}") @db.Text
+  seoTitleEn      String   @default("")
+  seoTitleAr      String   @default("")
+  seoDescEn       String   @default("")
+  seoDescAr       String   @default("")
+  seoKeywordsEn   String   @default("")
+  seoKeywordsAr   String   @default("")
+  ogImageUrl      String   @default("")
+  canonicalUrl    String   @default("")
+  noIndex         Boolean  @default(false)
+  status          String   @default("published")
+  showOnHomepage  Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model BlogPost {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  titleEn       String
+  titleAr       String
+  excerptEn     String   @default("") @db.Text
+  excerptAr     String   @default("") @db.Text
+  contentEn     String   @default("[]") @db.Text
+  contentAr     String   @default("[]") @db.Text
+  coverImage    String   @default("")
+  coverAltEn    String   @default("")
+  coverAltAr    String   @default("")
+  categoryEn    String   @default("")
+  categoryAr    String   @default("")
+  categorySlug  String   @default("")
+  tagsEn        String   @default("[]")
+  tagsAr        String   @default("[]")
+  author        String   @default("Malamih Creative Company")
+  publishedAt   DateTime @default(now())
+  status        String   @default("draft")
+  featured      Boolean  @default(false)
+  seoTitleEn    String   @default("")
+  seoTitleAr    String   @default("")
+  seoDescEn     String   @default("")
+  seoDescAr     String   @default("")
+  seoKeywordsEn String   @default("")
+  seoKeywordsAr String   @default("")
+  ogImageUrl    String   @default("")
+  canonicalUrl  String   @default("")
+  noIndex       Boolean  @default(false)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PageSeo {
+  pageKey       String  @id
+  seoTitleEn    String  @default("")
+  seoTitleAr    String  @default("")
+  seoDescEn     String  @default("")
+  seoDescAr     String  @default("")
+  seoKeywordsEn String  @default("")
+  seoKeywordsAr String  @default("")
+  ogImageUrl    String  @default("")
+  canonicalUrlEn String @default("")
+  canonicalUrlAr String @default("")
+  noIndex       Boolean @default(false)
+}
+
+model Service {
+  id            String  @id @default(cuid())
+  number        String  @default("")
+  titleEn       String
+  titleAr       String
+  descriptionEn String  @default("") @db.Text
+  descriptionAr String  @default("") @db.Text
+  tagsEn        String  @default("[]") @db.Text
+  tagsAr        String  @default("[]") @db.Text
+  iconUrl       String  @default("")
+  seoTitleEn    String  @default("")
+  seoTitleAr    String  @default("")
+  seoDescEn     String  @default("")
+  seoDescAr     String  @default("")
+  seoKeywordsEn String  @default("")
+  seoKeywordsAr String  @default("")
+  ogImageUrl    String  @default("")
+  canonicalUrl  String  @default("")
+  noIndex       Boolean @default(false)
+  sortOrder     Int     @default(0)
+  visible       Boolean @default(true)
+}
+
+model ContactSettings {
+  id              Int    @id @default(1)
+  phones          String @default("[]") @db.Text
+  whatsappNumbers String @default("[]") @db.Text
+  emails          String @default("[]") @db.Text
+  addressEn       String @default("")
+  addressAr       String @default("")
+  mapsUrl         String @default("")
+  socialLinks     String @default("[]") @db.Text
+  workingHoursEn  String @default("")
+  workingHoursAr  String @default("")
+}
+
+model ContactSubmission {
+  id           String   @id @default(cuid())
+  name         String
+  email        String
+  phone        String   @default("")
+  company      String   @default("")
+  subject      String   @default("")
+  message      String   @db.Text
+  status       String   @default("new")
+  formType     String   @default("contact")
+  sourcePage   String   @default("")
+  metadataJson String   @default("{}") @db.Text
+  utmSource    String   @default("")
+  utmMedium    String   @default("")
+  utmCampaign  String   @default("")
+  utmContent   String   @default("")
+  utmTerm      String   @default("")
+  leadId       String?
+  createdAt    DateTime @default(now())
+  lead         Lead?    @relation(fields: [leadId], references: [id])
+}
+
+model Lead {
+  id                 String    @id @default(cuid())
+  fullName           String
+  companyName        String    @default("")
+  email              String
+  phone              String    @default("")
+  whatsApp           String    @default("")
+  city               String    @default("")
+  country            String    @default("")
+  industry           String    @default("")
+  leadSource         String    @default("manual")
+  interestedServices String    @default("[]") @db.Text
+  budgetRange        String    @default("")
+  notes              String    @default("") @db.Text
+  status             String    @default("new")
+  priority           String    @default("medium")
+  assignedTo         String    @default("")
+  score              Int       @default(0)
+  qualityLabel       String    @default("cold")
+  utmSource          String    @default("")
+  utmMedium          String    @default("")
+  utmCampaign        String    @default("")
+  utmContent         String    @default("")
+  utmTerm            String    @default("")
+  lastContactDate    DateTime?
+  nextFollowUpDate   DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now()) @updatedAt
+  submissions        ContactSubmission[]
+  newsletterSubs     NewsletterSubscriber[]
+  magnetDownloads    LeadMagnetDownload[]
+  proposals          ProposalRequest[]
+}
+
+model NewsletterSubscriber {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String   @default("")
+  status      String   @default("active")
+  sourcePage  String   @default("")
+  utmSource   String   @default("")
+  utmMedium   String   @default("")
+  utmCampaign String   @default("")
+  utmContent  String   @default("")
+  utmTerm     String   @default("")
+  leadId      String?
+  createdAt   DateTime @default(now())
+  lead        Lead?    @relation(fields: [leadId], references: [id])
+}
+
+model LeadMagnet {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  titleEn        String
+  titleAr        String
+  descriptionEn  String   @default("")
+  descriptionAr  String   @default("")
+  coverImage     String   @default("")
+  fileUrl        String   @default("")
+  relatedService String   @default("")
+  status         String   @default("active")
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  downloads      LeadMagnetDownload[]
+}
+
+model LeadMagnetDownload {
+  id           String   @id @default(cuid())
+  leadMagnetId String
+  leadId       String?
+  name         String
+  email        String
+  phone        String   @default("")
+  company      String   @default("")
+  createdAt    DateTime @default(now())
+  leadMagnet   LeadMagnet @relation(fields: [leadMagnetId], references: [id], onDelete: Cascade)
+  lead         Lead?      @relation(fields: [leadId], references: [id])
+}
+
+model ProposalRequest {
+  id                 String   @id @default(cuid())
+  leadId             String?
+  contactSubmissionId String  @default("")
+  companyName        String   @default("")
+  contactName        String   @default("")
+  contactEmail       String   @default("")
+  contactPhone       String   @default("")
+  selectedServices   String   @default("[]") @db.Text
+  goals              String   @default("") @db.Text
+  budgetRange        String   @default("")
+  timeline           String   @default("")
+  status             String   @default("new")
+  utmSource          String   @default("")
+  utmMedium          String   @default("")
+  utmCampaign        String   @default("")
+  utmContent         String   @default("")
+  utmTerm            String   @default("")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @default(now()) @updatedAt
+  lead               Lead?    @relation(fields: [leadId], references: [id])
+}
+
+model LandingPage {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  titleEn        String
+  titleAr        String
+  headlineEn     String   @default("")
+  headlineAr     String   @default("")
+  descriptionEn  String   @default("") @db.Text
+  descriptionAr  String   @default("") @db.Text
+  coverImage     String   @default("")
+  coverVideo     String   @default("")
+  relatedService String   @default("")
+  ctaTextEn      String   @default("Get Started")
+  ctaTextAr      String   @default("ابدأ الآن")
+  formFieldsJson String   @default("[]") @db.Text
+  seoTitleEn     String   @default("")
+  seoTitleAr     String   @default("")
+  seoDescEn      String   @default("")
+  seoDescAr      String   @default("")
+  status         String   @default("draft")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+}
+
+model SiteSettings {
+  id                 Int    @id @default(1)
+  websiteNameEn      String @default("malamih")
+  websiteNameAr      String @default("malamih")
+  logoUrl            String @default("")
+  faviconUrl         String @default("")
+  defaultSeoTitleEn  String @default("")
+  defaultSeoTitleAr  String @default("")
+  defaultSeoDescEn   String @default("")
+  defaultSeoDescAr   String @default("")
+  defaultSeoKeywordsEn String @default("")
+  defaultSeoKeywordsAr String @default("")
+  ogImageUrl         String @default("")
+  siteUrl            String @default("https://malamih.net")
+  headerMenuJson     String @default("[]") @db.Text
+  footerContentJson  String @default("{}") @db.Text
+  footerLinksJson    String @default("[]") @db.Text
+  homeProjectsJson   String @default("{}") @db.Text
+  contactPageJson    String @default("{}") @db.Text
+  smtpHost           String @default("")
+  smtpPort           Int    @default(587)
+  smtpUser           String @default("")
+  smtpPass           String @default("")
+  smtpFromEmail      String @default("")
+  smtpFromName       String @default("")
+  smtpEnabled        Boolean @default(false)
+  notifyEmail        String @default("")
+  googleAnalyticsId  String @default("")
+  googleTagManagerId String @default("")
+  metaPixelId        String @default("")
+  tiktokPixelId      String @default("")
+  linkedInInsightTag String @default("")
+  googleSiteVerification String @default("")
+  metaDomainVerification String @default("")
+}
