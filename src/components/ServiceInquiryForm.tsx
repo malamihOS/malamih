@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import InquirySelect from "@/components/InquirySelect";
 import { useLocale } from "@/context/LocaleProvider";
 import { readStoredUtmClient } from "@/lib/leads/utm";
 import styles from "./ServiceInquiryForm.module.css";
@@ -20,11 +21,34 @@ export default function ServiceInquiryForm({
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
+  const [budgetRange, setBudgetRange] = useState("");
+  const [contactMethod, setContactMethod] = useState("email");
+
+  const budgetOptions = [
+    { value: "under-5k", label: t.growth.budget.under5k },
+    { value: "5k-15k", label: t.growth.budget.range5k15k },
+    { value: "15k-50k", label: t.growth.budget.range15k50k },
+    { value: "50k-100k", label: t.growth.budget.range50k100k },
+    { value: "100k+", label: t.growth.budget.over100k },
+    { value: "not-sure", label: t.growth.budget.notSure },
+  ];
+
+  const contactOptions = [
+    { value: "email", label: t.growth.inquiry.contactEmail },
+    { value: "phone", label: t.growth.inquiry.contactPhone },
+    { value: "whatsapp", label: t.growth.inquiry.contactWhatsApp },
+  ];
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
     setError("");
+
+    if (!budgetRange) {
+      setError(t.growth.inquiry.budget);
+      setSubmitting(false);
+      return;
+    }
 
     const formData = new FormData(e.currentTarget);
     const payload = {
@@ -34,8 +58,8 @@ export default function ServiceInquiryForm({
       email: String(formData.get("email") ?? ""),
       service: serviceSlug,
       description: String(formData.get("description") ?? ""),
-      budgetRange: String(formData.get("budgetRange") ?? ""),
-      contactMethod: String(formData.get("contactMethod") ?? ""),
+      budgetRange,
+      contactMethod,
       website: String(formData.get("website") ?? ""),
       sourcePage: window.location.pathname,
       ...readStoredUtmClient(),
@@ -89,22 +113,20 @@ export default function ServiceInquiryForm({
         className={styles.textarea}
       />
       <div className={styles.grid}>
-        <select name="budgetRange" className={styles.input} defaultValue="">
-          <option value="" disabled>
-            {t.growth.inquiry.budget}
-          </option>
-          <option value="under-5k">{t.growth.budget.under5k}</option>
-          <option value="5k-15k">{t.growth.budget.range5k15k}</option>
-          <option value="15k-50k">{t.growth.budget.range15k50k}</option>
-          <option value="50k-100k">{t.growth.budget.range50k100k}</option>
-          <option value="100k+">{t.growth.budget.over100k}</option>
-          <option value="not-sure">{t.growth.budget.notSure}</option>
-        </select>
-        <select name="contactMethod" className={styles.input} defaultValue="email">
-          <option value="email">{t.growth.inquiry.contactEmail}</option>
-          <option value="phone">{t.growth.inquiry.contactPhone}</option>
-          <option value="whatsapp">{t.growth.inquiry.contactWhatsApp}</option>
-        </select>
+        <InquirySelect
+          name="budgetRange"
+          value={budgetRange}
+          onChange={setBudgetRange}
+          placeholder={t.growth.inquiry.budget}
+          options={budgetOptions}
+        />
+        <InquirySelect
+          name="contactMethod"
+          value={contactMethod}
+          onChange={setContactMethod}
+          placeholder={t.growth.inquiry.contactEmail}
+          options={contactOptions}
+        />
       </div>
       <input type="text" name="website" className={styles.honeypot} tabIndex={-1} autoComplete="off" aria-hidden="true" />
       {error ? (

@@ -47,7 +47,7 @@ export default function ServicesSection() {
           {t.home.services.items.map((service) => (
             <motion.article
               key={service.number}
-              className={styles.item}
+              className={`${styles.item}${openInquiry === service.number ? ` ${styles.itemInquiryOpen}` : ""}`}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: "-40px" }}
@@ -79,14 +79,17 @@ export default function ServicesSection() {
                 <>
                   <button
                     type="button"
-                    className={styles.inquireBtn}
+                    className={`${styles.inquireBtn}${openInquiry === service.number ? ` ${styles.inquireBtnActive}` : ""}`}
                     onClick={() =>
                       setOpenInquiry(
                         openInquiry === service.number ? null : service.number,
                       )
                     }
                   >
-                    {t.growth.inquiry.inquire}
+                    <span>{t.growth.inquiry.inquire}</span>
+                    <span className={styles.inquireBtnIcon} aria-hidden>
+                      →
+                    </span>
                   </button>
                   {openInquiry === service.number ? (
                     <ServiceInquiryForm

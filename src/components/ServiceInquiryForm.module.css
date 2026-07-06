@@ -1,69 +1,215 @@
 .panel {
-  margin-top: 16px;
-  padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+  z-index: 2;
+  margin-top: 20px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
 }
 
 .heading {
-  margin: 0 0 12px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 18px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .input,
 .textarea {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 4px;
-  background: transparent;
-  color: inherit;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
   font: inherit;
+  font-size: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.32);
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.07);
 }
 
 .textarea {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   resize: vertical;
+  min-height: 96px;
+}
+
+.selectWrap {
+  position: relative;
+}
+
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.selectTriggerPlaceholder .selectValue {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.selectTrigger:hover,
+.selectTriggerOpen {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.selectTrigger:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.07);
+}
+
+.selectValue {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectChevron {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.7);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.7);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.selectTriggerOpen .selectChevron {
+  transform: rotate(-135deg) translateY(1px);
+}
+
+.selectMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #0a0a0a;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.selectOption {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.86);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.selectOption:hover,
+.selectOptionActive {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 14px;
   flex-wrap: wrap;
+  margin-top: 4px;
 }
 
 .submit {
-  padding: 10px 18px;
-  border: 1px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 22px;
+  border: none;
   border-radius: 999px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
+  background: #ffffff;
+  color: #000000;
   font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.08);
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.12);
+}
+
+.submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .cancel {
-  padding: 10px 18px;
+  padding: 10px 4px;
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.65);
-  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
   font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.15s;
+}
+
+.cancel:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .error {
-  color: #ff6b6b;
+  color: #ff8f8f;
   font-size: 13px;
-  margin: 0 0 8px;
+  margin: 0 0 10px;
 }
 
 .honeypot {
@@ -73,17 +219,37 @@
 }
 
 .closeBtn {
-  margin-top: 8px;
-  padding: 8px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 999px;
   background: transparent;
   color: inherit;
+  font: inherit;
+  font-size: 14px;
   cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 @media (max-width: 768px) {
+  .panel {
+    padding: 18px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .submit {
+    width: 100%;
   }
 }
