@@ -99,11 +99,12 @@ export default function ImageUpload({
         }}
       />
       <input
-        type="url"
+        type="text"
+        inputMode="url"
         className="admin-input"
-        placeholder="Or paste URL"
+        placeholder="/uploads/... or https://..."
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(normalizeUploadUrl(e.target.value))}
         aria-label={`${label} URL`}
       />
       {hint ? <p className="admin-inline-hint">{hint}</p> : null}
