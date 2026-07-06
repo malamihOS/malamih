@@ -37,8 +37,10 @@ export function buildNavLinksFromMenu(
 ): CmsNavLink[] {
   const visibleItems = items.filter((item) => item.visible !== false);
 
+  let links: CmsNavLink[];
+
   if (visibleItems.length > 0) {
-    return visibleItems.map((item) => ({
+    links = visibleItems.map((item) => ({
       key: item.key ?? item.href,
       href: item.href,
       label:
@@ -47,13 +49,37 @@ export function buildNavLinksFromMenu(
         item.href,
       external: item.external,
     }));
+  } else {
+    links = DEFAULT_NAV_KEYS.map((key) => ({
+      key,
+      href: DEFAULT_NAV_HREFS[key],
+      label: staticNav[key],
+    }));
   }
 
-  return DEFAULT_NAV_KEYS.map((key) => ({
-    key,
-    href: DEFAULT_NAV_HREFS[key],
-    label: staticNav[key],
-  }));
+  const hasBlog = links.some(
+    (link) =>
+      link.key === "blog" ||
+      link.href === "/blog" ||
+      link.href.endsWith("/blog"),
+  );
+
+  if (!hasBlog) {
+    const projectsIndex = links.findIndex((link) => link.key === "projects");
+    const blogLink: CmsNavLink = {
+      key: "blog",
+      href: DEFAULT_NAV_HREFS.blog,
+      label: staticNav.blog,
+    };
+
+    if (projectsIndex >= 0) {
+      links.splice(projectsIndex + 1, 0, blogLink);
+    } else {
+      links.push(blogLink);
+    }
+  }
+
+  return links;
 }
 
 export function buildTalkLinks(contact: ContactSettingsData): CmsNavLink[] {

@@ -19,19 +19,30 @@ export type SitemapPage = {
   lastModified: Date;
 };
 
-export async function getSitemapPages(): Promise<SitemapPage[]> {
-  const [projectSlugs, blogSlugs] = await Promise.all([
-    getAllPublishedProjectSlugs(),
-    getAllPublishedBlogSlugs(),
-  ]);
-
-  const now = new Date();
-  const pages: SitemapPage[] = STATIC_PATHS.map((path) => ({
+function buildStaticPages(now = new Date()): SitemapPage[] {
+  return STATIC_PATHS.map((path) => ({
     path,
     lastModified: now,
     changeFrequency: path === "/" ? "weekly" : "monthly",
     priority: path === "/" ? 1 : 0.8,
   }));
+}
+
+export async function getSitemapPages(): Promise<SitemapPage[]> {
+  const now = new Date();
+  const pages = buildStaticPages(now);
+
+  let projectSlugs: string[] = [];
+  let blogSlugs: string[] = [];
+
+  try {
+    [projectSlugs, blogSlugs] = await Promise.all([
+      getAllPublishedProjectSlugs(),
+      getAllPublishedBlogSlugs(),
+    ]);
+  } catch {
+    // Keep static pages even if CMS lookups fail.
+  }
 
   for (const slug of projectSlugs) {
     pages.push({
@@ -72,10 +83,10 @@ function renderAlternateLinks(path: string) {
   const ar = absoluteUrl(path, "ar");
 
   return [
-    `<xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}" />`,
-    `<xhtml:link rel="alternate" hreflang="ar" href="${escapeXml(ar)}" />`,
-    `<xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(en)}" />`,
-  ].join("");
+    `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}" />`,
+    `    <xhtml:link rel="alternate" hreflang="ar" href="${escapeXml(ar)}" />`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(en)}" />`,
+  ].join("\n");
 }
 
 export function renderSitemapXml(pages: SitemapPage[]) {
@@ -89,7 +100,7 @@ export function renderSitemapXml(pages: SitemapPage[]) {
         `    <lastmod>${formatLastModified(page.lastModified)}</lastmod>`,
         `    <changefreq>${page.changeFrequency}</changefreq>`,
         `    <priority>${page.priority.toFixed(1)}</priority>`,
-        `    ${renderAlternateLinks(page.path)}`,
+        renderAlternateLinks(page.path),
         "  </url>",
       ].join("\n");
     })
@@ -101,4 +112,8 @@ export function renderSitemapXml(pages: SitemapPage[]) {
     urls,
     "</urlset>",
   ].join("\n");
+}
+
+export function getFallbackSitemapXml() {
+  return renderSitemapXml(buildStaticPages());
 }

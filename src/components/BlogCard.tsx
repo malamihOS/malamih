@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
+import BlogCoverImage from "@/components/BlogCoverImage";
 import type { CmsBlogPost } from "@/lib/blog/types";
+import { useLocale } from "@/context/LocaleProvider";
 import styles from "./BlogCard.module.css";
 
 export default function BlogCard({
@@ -12,14 +15,16 @@ export default function BlogCard({
   index?: number;
   href: string;
 }) {
+  const { locale } = useLocale();
+  const dateLocale = locale === "ar" ? "ar-IQ" : "en";
+
   return (
     <article className={styles.card}>
       <Link href={href} className={styles.imageLink}>
         <div className={styles.imageWrap}>
-          <Image
+          <BlogCoverImage
             src={post.coverImage}
             alt={post.coverAlt || post.title}
-            fill
             sizes="(max-width: 768px) 100vw, 400px"
             className={styles.image}
             loading={index < 2 ? "eager" : "lazy"}
@@ -30,7 +35,7 @@ export default function BlogCard({
         <div className={styles.meta}>
           <span className={styles.category}>{post.category}</span>
           <time dateTime={post.publishedAt} className={styles.date}>
-            {new Date(post.publishedAt).toLocaleDateString(undefined, {
+            {new Date(post.publishedAt).toLocaleDateString(dateLocale, {
               year: "numeric",
               month: "short",
               day: "numeric",

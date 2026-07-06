@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import BlogCard from "@/components/BlogCard";
 import BlogContent from "@/components/BlogContent";
+import BlogCoverImage from "@/components/BlogCoverImage";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { useLocale } from "@/context/LocaleProvider";
@@ -17,7 +17,8 @@ export default function BlogDetailSection({
   post: CmsBlogPost;
   related: CmsBlogPost[];
 }) {
-  const { t, localizePath } = useLocale();
+  const { t, localizePath, locale } = useLocale();
+  const dateLocale = locale === "ar" ? "ar-IQ" : "en";
 
   return (
     <section className={styles.section} aria-labelledby="blog-detail-title">
@@ -40,7 +41,7 @@ export default function BlogDetailSection({
                 {post.category}
               </Link>
               <time dateTime={post.publishedAt} className={styles.date}>
-                {new Date(post.publishedAt).toLocaleDateString(undefined, {
+                {new Date(post.publishedAt).toLocaleDateString(dateLocale, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -58,10 +59,9 @@ export default function BlogDetailSection({
 
           {post.coverImage ? (
             <div className={styles.heroImageWrap}>
-              <Image
+              <BlogCoverImage
                 src={post.coverImage}
                 alt={post.coverAlt || post.title}
-                fill
                 priority
                 sizes="100vw"
                 className={styles.heroImage}

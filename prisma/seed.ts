@@ -352,6 +352,7 @@ async function main() {
       headerMenuJson: JSON.stringify([
         { key: "home", href: "/", labelEn: en.common.nav.home, labelAr: ar.common.nav.home, visible: true },
         { key: "projects", href: "/projects", labelEn: en.common.nav.projects, labelAr: ar.common.nav.projects, visible: true },
+        { key: "blog", href: "/blog", labelEn: en.common.nav.blog, labelAr: ar.common.nav.blog, visible: true },
         { key: "services", href: "/#services", labelEn: en.common.nav.services, labelAr: ar.common.nav.services, visible: true },
         { key: "contact", href: "/contact", labelEn: en.common.nav.contact, labelAr: ar.common.nav.contact, visible: true },
       ]),
