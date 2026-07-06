@@ -14,6 +14,8 @@ import {
 type AdminSidebarProps = {
   role?: AdminRole;
   email?: string;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 };
 
 function isActive(pathname: string, href: string, exact?: boolean) {
@@ -21,7 +23,12 @@ function isActive(pathname: string, href: string, exact?: boolean) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export default function AdminSidebar({ role = "admin", email }: AdminSidebarProps) {
+export default function AdminSidebar({
+  role = "admin",
+  email,
+  mobileOpen = false,
+  onMobileClose,
+}: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [sessionEmail, setSessionEmail] = useState(email ?? "");
@@ -88,6 +95,7 @@ export default function AdminSidebar({ role = "admin", email }: AdminSidebarProp
   function handleNavigate(href: string) {
     if (isActive(pathname, href, href === "/admin")) return;
     setPendingHref(href);
+    onMobileClose?.();
   }
 
   async function handleLogout() {
@@ -100,9 +108,22 @@ export default function AdminSidebar({ role = "admin", email }: AdminSidebarProp
     <>
       {showProgress ? <div className="admin-route-progress" aria-hidden /> : null}
 
-      <aside className="admin-sidebar">
+      <aside
+        id="admin-sidebar"
+        className={`admin-sidebar${mobileOpen ? " admin-sidebar--open" : ""}`}
+      >
         <div className="admin-sidebar-brand">
-          <AdminBrandLogo href="/admin" />
+          <div className="admin-sidebar-brand-row">
+            <AdminBrandLogo href="/admin" />
+            <button
+              type="button"
+              className="admin-sidebar-close"
+              aria-label="Close menu"
+              onClick={onMobileClose}
+            >
+              ×
+            </button>
+          </div>
           <p className="admin-sidebar-brand-label">Admin panel</p>
         </div>
 
