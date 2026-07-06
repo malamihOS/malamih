@@ -1,6 +1,7 @@
 import type { CmsProjectGallery } from "@/lib/cms/types";
 import type { Locale } from "@/i18n/config";
 import type { ProjectContent, ProjectSectionContent } from "@/i18n/types";
+import { normalizeGalleryPositions } from "@/lib/cms/gallery-position";
 import { normalizeUploadUrl } from "@/lib/media-url";
 
 type StoredProjectSection = {
@@ -134,6 +135,7 @@ export function normalizeProjectGallery(
       tall: normalizeGalleryUrl(raw?.mosaicTwo?.tall),
     },
     wide: normalizeGalleryUrl(raw?.wide),
+    positions: normalizeGalleryPositions(raw?.positions),
   };
 }
 

@@ -7,6 +7,7 @@ import { useTranslations } from "@/context/LocaleProvider";
 import ProjectInquiryForm from "@/components/ProjectInquiryForm";
 import type { Project, ProjectSection } from "@/data/projects";
 import { hasGalleryImage } from "@/lib/cms/normalize-project";
+import { getGalleryImagePosition } from "@/lib/cms/gallery-position";
 import styles from "./ProjectDetail.module.css";
 
 const REVEAL = {
@@ -24,12 +25,14 @@ function ProjectImage({
   className,
   sizes,
   priority = false,
+  objectPosition = "center",
 }: {
   src: string;
   alt: string;
   className?: string;
   sizes: string;
   priority?: boolean;
+  objectPosition?: string;
 }) {
   if (!hasGalleryImage(src)) return null;
 
@@ -41,6 +44,7 @@ function ProjectImage({
         fill
         sizes={sizes}
         className={styles.image}
+        style={{ objectPosition }}
         priority={priority}
       />
     </div>
@@ -147,6 +151,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             className={styles.heroImage}
             sizes="100vw"
             priority
+            objectPosition={getGalleryImagePosition(gallery, "hero")}
           />
         </motion.div>
       ) : null}
@@ -163,6 +168,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             alt={`${project.title} ${labels.showcaseAlt}`}
             className={styles.mosaicTall}
             sizes="(max-width: 768px) 100vw, 50vw"
+            objectPosition={getGalleryImagePosition(gallery, "mosaicOne.tall")}
           />
           <div className={styles.mosaicStack}>
             <ProjectImage
@@ -170,12 +176,14 @@ export default function ProjectDetail({ project }: { project: Project }) {
               alt={`${project.title} ${labels.detailAlt}`}
               className={styles.mosaicSmall}
               sizes="(max-width: 768px) 100vw, 50vw"
+              objectPosition={getGalleryImagePosition(gallery, "mosaicOne.top")}
             />
             <ProjectImage
               src={gallery.mosaicOne.bottom}
               alt={`${project.title} ${labels.detailAlt}`}
               className={styles.mosaicSmall}
               sizes="(max-width: 768px) 100vw, 50vw"
+              objectPosition={getGalleryImagePosition(gallery, "mosaicOne.bottom")}
             />
           </div>
         </div>
@@ -193,12 +201,14 @@ export default function ProjectDetail({ project }: { project: Project }) {
               alt={`${project.title} ${labels.detailAlt}`}
               className={styles.mosaicSmall}
               sizes="(max-width: 768px) 100vw, 50vw"
+              objectPosition={getGalleryImagePosition(gallery, "mosaicTwo.top")}
             />
             <ProjectImage
               src={gallery.mosaicTwo.bottom}
               alt={`${project.title} ${labels.detailAlt}`}
               className={styles.mosaicSmall}
               sizes="(max-width: 768px) 100vw, 50vw"
+              objectPosition={getGalleryImagePosition(gallery, "mosaicTwo.bottom")}
             />
           </div>
           <ProjectImage
@@ -206,6 +216,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             alt={`${project.title} ${labels.showcaseAlt}`}
             className={styles.mosaicTall}
             sizes="(max-width: 768px) 100vw, 50vw"
+            objectPosition={getGalleryImagePosition(gallery, "mosaicTwo.tall")}
           />
         </div>
         ) : null}
@@ -225,6 +236,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             alt={`${project.title} ${labels.finalAlt}`}
             className={styles.wideImage}
             sizes="100vw"
+            objectPosition={getGalleryImagePosition(gallery, "wide")}
           />
         </motion.div>
         ) : null}

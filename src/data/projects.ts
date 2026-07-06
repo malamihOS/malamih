@@ -1,6 +1,7 @@
 import type { Locale } from "@/i18n/config";
 import { localizePath } from "@/i18n/navigation";
 import type { CmsProject } from "@/lib/cms/types";
+import { getGalleryImagePosition } from "@/lib/cms/gallery-position";
 import {
   getAllProjectsForLocale,
   getCmsProjectBySlug,
@@ -45,5 +46,6 @@ export function getProjectCardData(project: CmsProject, locale: Locale) {
     title: project.title,
     year: project.year,
     image: project.cardImage,
+    imagePosition: getGalleryImagePosition(project.gallery, "cover"),
   };
 }

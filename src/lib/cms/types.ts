@@ -116,6 +116,20 @@ export type CmsProjectGallery = {
   mosaicOne: { tall: string; top: string; bottom: string };
   mosaicTwo: { top: string; bottom: string; tall: string };
   wide: string;
+  positions?: Partial<
+    Record<
+      | "cover"
+      | "hero"
+      | "mosaicOne.tall"
+      | "mosaicOne.top"
+      | "mosaicOne.bottom"
+      | "mosaicTwo.top"
+      | "mosaicTwo.bottom"
+      | "mosaicTwo.tall"
+      | "wide",
+      string
+    >
+  >;
 };
 
 export type CmsProject = {

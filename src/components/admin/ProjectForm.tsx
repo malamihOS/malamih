@@ -5,8 +5,13 @@ import { useRouter } from "next/navigation";
 import BilingualField from "@/components/admin/BilingualField";
 import FormField from "@/components/admin/FormField";
 import ImageUpload from "@/components/admin/ImageUpload";
+import ProjectImagePosition from "@/components/admin/ProjectImagePosition";
 import SaveButton from "@/components/admin/SaveButton";
 import { adminFetch } from "@/lib/admin-client";
+import {
+  GALLERY_IMAGE_ASPECT,
+  type GalleryImageKey,
+} from "@/lib/cms/gallery-position";
 import {
   PROJECT_SECTION_KEYS,
   PROJECT_SECTION_META,
@@ -27,6 +32,38 @@ type ProjectFormProps = {
   project?: Project;
   onSaved?: (id: string) => void;
 };
+
+function GalleryImageField({
+  label,
+  imageKey,
+  value,
+  onChange,
+  position,
+  onPositionChange,
+  hint,
+}: {
+  label: string;
+  imageKey: GalleryImageKey;
+  value: string;
+  onChange: (value: string) => void;
+  position: string;
+  onPositionChange: (value: string) => void;
+  hint?: string;
+}) {
+  return (
+    <div className="admin-gallery-slot">
+      <ImageUpload label={label} value={value} onChange={onChange} hint={hint} />
+      {value ? (
+        <ProjectImagePosition
+          imageUrl={value}
+          value={position}
+          onChange={onPositionChange}
+          aspectRatio={GALLERY_IMAGE_ASPECT[imageKey]}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 function ProjectSectionEditor({
   sectionKey,
@@ -137,6 +174,13 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
     setGallery((current) => ({
       ...current,
       mosaicTwo: { ...current.mosaicTwo, [field]: value },
+    }));
+  }
+
+  function updatePosition(imageKey: GalleryImageKey, position: string) {
+    setGallery((current) => ({
+      ...current,
+      positions: { ...current.positions, [imageKey]: position },
     }));
   }
 
@@ -323,36 +367,51 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
             Upload images in the same layout as the Lumeo demo — hero, two mosaic groups, and a wide image.
           </p>
         </div>
-        <ImageUpload
+        <GalleryImageField
           label="Cover image (project card)"
+          imageKey="cover"
           value={coverImage}
           onChange={setCoverImage}
+          position={gallery.positions.cover}
+          onPositionChange={(value) => updatePosition("cover", value)}
           hint="Shown on the projects list and homepage cards."
         />
-        <ImageUpload
+        <GalleryImageField
           label="Hero image"
+          imageKey="hero"
           value={gallery.hero}
           onChange={(value) => setGallery((current) => ({ ...current, hero: value }))}
+          position={gallery.positions.hero}
+          onPositionChange={(value) => updatePosition("hero", value)}
           hint="Large image at the top of the project page. Uses cover image if left empty."
         />
 
         <div className="admin-project-subsection">
           <h3 className="admin-project-subsection-title">Mosaic group 1</h3>
           <div className="admin-grid admin-grid-3">
-            <ImageUpload
+            <GalleryImageField
               label="Tall (left)"
+              imageKey="mosaicOne.tall"
               value={gallery.mosaicOne.tall}
               onChange={(value) => updateMosaicOne("tall", value)}
+              position={gallery.positions["mosaicOne.tall"]}
+              onPositionChange={(value) => updatePosition("mosaicOne.tall", value)}
             />
-            <ImageUpload
+            <GalleryImageField
               label="Top (right)"
+              imageKey="mosaicOne.top"
               value={gallery.mosaicOne.top}
               onChange={(value) => updateMosaicOne("top", value)}
+              position={gallery.positions["mosaicOne.top"]}
+              onPositionChange={(value) => updatePosition("mosaicOne.top", value)}
             />
-            <ImageUpload
+            <GalleryImageField
               label="Bottom (right)"
+              imageKey="mosaicOne.bottom"
               value={gallery.mosaicOne.bottom}
               onChange={(value) => updateMosaicOne("bottom", value)}
+              position={gallery.positions["mosaicOne.bottom"]}
+              onPositionChange={(value) => updatePosition("mosaicOne.bottom", value)}
             />
           </div>
         </div>
@@ -360,29 +419,41 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
         <div className="admin-project-subsection">
           <h3 className="admin-project-subsection-title">Mosaic group 2</h3>
           <div className="admin-grid admin-grid-3">
-            <ImageUpload
+            <GalleryImageField
               label="Top (left)"
+              imageKey="mosaicTwo.top"
               value={gallery.mosaicTwo.top}
               onChange={(value) => updateMosaicTwo("top", value)}
+              position={gallery.positions["mosaicTwo.top"]}
+              onPositionChange={(value) => updatePosition("mosaicTwo.top", value)}
             />
-            <ImageUpload
+            <GalleryImageField
               label="Bottom (left)"
+              imageKey="mosaicTwo.bottom"
               value={gallery.mosaicTwo.bottom}
               onChange={(value) => updateMosaicTwo("bottom", value)}
+              position={gallery.positions["mosaicTwo.bottom"]}
+              onPositionChange={(value) => updatePosition("mosaicTwo.bottom", value)}
             />
-            <ImageUpload
+            <GalleryImageField
               label="Tall (right)"
+              imageKey="mosaicTwo.tall"
               value={gallery.mosaicTwo.tall}
               onChange={(value) => updateMosaicTwo("tall", value)}
+              position={gallery.positions["mosaicTwo.tall"]}
+              onPositionChange={(value) => updatePosition("mosaicTwo.tall", value)}
             />
           </div>
         </div>
 
         <div className="admin-project-subsection">
-          <ImageUpload
+          <GalleryImageField
             label="Wide image"
+            imageKey="wide"
             value={gallery.wide}
             onChange={(value) => setGallery((current) => ({ ...current, wide: value }))}
+            position={gallery.positions.wide}
+            onPositionChange={(value) => updatePosition("wide", value)}
             hint="Full-width image before the text sections."
           />
         </div>

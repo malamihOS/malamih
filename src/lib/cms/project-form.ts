@@ -1,4 +1,10 @@
 import type { CmsProjectGallery } from "@/lib/cms/types";
+import {
+  createEmptyGalleryPositions,
+  normalizeGalleryPositions,
+  serializeGalleryPositions,
+  type GalleryImageKey,
+} from "@/lib/cms/gallery-position";
 import { DEFAULT_PROJECT_SECTIONS } from "@/lib/cms/normalize-project";
 
 export const PROJECT_SECTION_KEYS = [
@@ -35,6 +41,7 @@ export type GalleryFormState = {
   mosaicOne: { tall: string; top: string; bottom: string };
   mosaicTwo: { top: string; bottom: string; tall: string };
   wide: string;
+  positions: Record<GalleryImageKey, string>;
 };
 
 export type SectionFormState = {
@@ -67,6 +74,7 @@ export const EMPTY_GALLERY: GalleryFormState = {
   mosaicOne: { tall: "", top: "", bottom: "" },
   mosaicTwo: { top: "", bottom: "", tall: "" },
   wide: "",
+  positions: createEmptyGalleryPositions(),
 };
 
 export function paragraphsToText(paragraphs: string[]): string {
@@ -108,6 +116,7 @@ export function parseGalleryFromProject(
       tall: raw.mosaicTwo?.tall ?? "",
     },
     wide: raw.wide ?? "",
+    positions: normalizeGalleryPositions(raw.positions),
   };
 }
 
@@ -180,6 +189,7 @@ export function serializeGallery(
     mosaicOne: { ...gallery.mosaicOne },
     mosaicTwo: { ...gallery.mosaicTwo },
     wide: gallery.wide,
+    positions: serializeGalleryPositions(gallery.positions),
   };
 }
 

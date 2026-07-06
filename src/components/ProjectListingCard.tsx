@@ -34,6 +34,7 @@ export default function ProjectListingCard({
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className={styles.cardImage}
+              style={{ objectPosition: project.imagePosition ?? "center" }}
             />
           </div>
 

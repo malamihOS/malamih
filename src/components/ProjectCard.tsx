@@ -11,6 +11,7 @@ export type ProjectCardData = {
   title: string;
   year: string;
   image: string;
+  imagePosition?: string;
 };
 
 function SwapText({ text }: { text: string }) {
@@ -52,6 +53,7 @@ export default function ProjectCard({
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 628px"
               className={styles.cardImage}
+              style={{ objectPosition: project.imagePosition ?? "center" }}
             />
           </div>
         </div>
