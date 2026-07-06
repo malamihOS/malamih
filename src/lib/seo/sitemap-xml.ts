@@ -12,7 +12,7 @@ const STATIC_PATHS = [
   "/legal/privacy-policy",
 ] as const;
 
-export type SitemapPage = {
+type SitemapPage = {
   path: string;
   changeFrequency: NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>;
   priority: number;
@@ -28,7 +28,7 @@ function buildStaticPages(now = new Date()): SitemapPage[] {
   }));
 }
 
-export async function getSitemapPages(): Promise<SitemapPage[]> {
+async function getSitemapPages(): Promise<SitemapPage[]> {
   const now = new Date();
   const pages = buildStaticPages(now);
 
@@ -65,55 +65,26 @@ export async function getSitemapPages(): Promise<SitemapPage[]> {
   return pages;
 }
 
-function escapeXml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
+function toSitemapEntry(page: SitemapPage): MetadataRoute.Sitemap[number] {
+  return {
+    url: absoluteUrl(page.path, "en"),
+    lastModified: page.lastModified,
+    changeFrequency: page.changeFrequency,
+    priority: page.priority,
+    alternates: {
+      languages: {
+        en: absoluteUrl(page.path, "en"),
+        ar: absoluteUrl(page.path, "ar"),
+      },
+    },
+  };
 }
 
-function formatLastModified(date: Date) {
-  return date.toISOString().slice(0, 10);
+export async function getSitemapEntries(): Promise<MetadataRoute.Sitemap> {
+  const pages = await getSitemapPages();
+  return pages.map(toSitemapEntry);
 }
 
-function renderAlternateLinks(path: string) {
-  const en = absoluteUrl(path, "en");
-  const ar = absoluteUrl(path, "ar");
-
-  return [
-    `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}" />`,
-    `    <xhtml:link rel="alternate" hreflang="ar" href="${escapeXml(ar)}" />`,
-    `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(en)}" />`,
-  ].join("\n");
-}
-
-export function renderSitemapXml(pages: SitemapPage[]) {
-  const urls = pages
-    .map((page) => {
-      const loc = absoluteUrl(page.path, "en");
-
-      return [
-        "  <url>",
-        `    <loc>${escapeXml(loc)}</loc>`,
-        `    <lastmod>${formatLastModified(page.lastModified)}</lastmod>`,
-        `    <changefreq>${page.changeFrequency}</changefreq>`,
-        `    <priority>${page.priority.toFixed(1)}</priority>`,
-        renderAlternateLinks(page.path),
-        "  </url>",
-      ].join("\n");
-    })
-    .join("\n");
-
-  return [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
-    urls,
-    "</urlset>",
-  ].join("\n");
-}
-
-export function getFallbackSitemapXml() {
-  return renderSitemapXml(buildStaticPages());
+export function getFallbackSitemapEntries(): MetadataRoute.Sitemap {
+  return buildStaticPages().map(toSitemapEntry);
 }
