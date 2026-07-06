@@ -15,6 +15,10 @@ import type {
 import { buildNavLinksFromMenu, buildTalkLinks } from "@/lib/cms/nav-links";
 import { parseJson, pick } from "@/lib/cms/utils";
 import { normalizeUploadUrl } from "@/lib/media-url";
+import {
+  normalizeProjectGallery,
+  normalizeProjectSections,
+} from "@/lib/cms/normalize-project";
 
 function mediaUrl(url: string | null | undefined): string {
   return url ? normalizeUploadUrl(url) : "";
@@ -576,9 +580,8 @@ function buildProjectItems(
   for (const project of projects) {
     if (project.status !== "published") continue;
 
-    const sections = parseJson<ProjectContent["sections"]>(
-      project.sectionsJson,
-      {} as ProjectContent["sections"],
+    const sections = normalizeProjectSections(
+      parseJson<Partial<ProjectContent["sections"]>>(project.sectionsJson, {}),
     );
 
     items[project.slug] = {
@@ -807,12 +810,17 @@ function buildProjects(
     .filter((p) => p.status === "published")
     .sort((a, b) => a.sortOrder - b.sortOrder)
     .map((project) => {
-      const gallery = parseJson<CmsProjectGallery>(project.galleryJson, {
+      const rawGallery = parseJson<CmsProjectGallery>(project.galleryJson, {
         hero: project.coverImage,
         mosaicOne: { tall: "", top: "", bottom: "" },
         mosaicTwo: { top: "", bottom: "", tall: "" },
         wide: "",
       });
+      const gallery = normalizeProjectGallery(rawGallery, project.coverImage);
+      const rawSections = parseJson<Partial<ProjectContent["sections"]>>(
+        project.sectionsJson,
+        {},
+      );
 
       return {
         slug: project.slug,
@@ -824,9 +832,9 @@ function buildProjects(
         timeline: project.timeline,
         year: project.year,
         liveUrl: project.projectUrl,
-        cardImage: mediaUrl(project.coverImage) || mediaUrl(gallery.hero),
+        cardImage: mediaUrl(project.coverImage) || gallery.hero,
         gallery,
-        sections: parseJson(project.sectionsJson, {} as CmsProject["sections"]),
+        sections: normalizeProjectSections(rawSections),
         clientName: project.clientName,
         servicesUsed: parseJson<string[]>(project.servicesUsed, []),
         seoTitle: pick(project.seoTitleEn, project.seoTitleAr, locale),

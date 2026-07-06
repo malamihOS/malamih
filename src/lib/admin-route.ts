@@ -55,6 +55,15 @@ export function revalidatePublicSite() {
   }
 }
 
+export function revalidateProjectPaths(slug?: string) {
+  revalidatePublicSite();
+
+  if (!slug) return;
+
+  revalidatePath(`/projects/${slug}`, "page");
+  revalidatePath(`/ar/projects/${slug}`, "page");
+}
+
 export async function withAdminMutation(
   request: Request,
   handler: (session: AdminSession) => Promise<Response>,

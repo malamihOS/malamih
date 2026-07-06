@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { withAdmin, withAdminMutation, jsonError } from "@/lib/admin-route";
+import { withAdmin, withAdminMutation, jsonError, revalidateProjectPaths } from "@/lib/admin-route";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -98,6 +98,7 @@ export async function PUT(request: Request, context: RouteContext) {
         where: { id },
         data: normalizeUpdate(parsed.data),
       });
+      revalidateProjectPaths(project.slug);
       return NextResponse.json({ project });
     } catch {
       return jsonError("Project not found", 404);
@@ -109,7 +110,9 @@ export async function DELETE(request: Request, context: RouteContext) {
   return withAdminMutation(request, async () => {
     const { id } = await context.params;
     try {
+      const project = await prisma.project.findUnique({ where: { id } });
       await prisma.project.delete({ where: { id } });
+      if (project) revalidateProjectPaths(project.slug);
       return NextResponse.json({ success: true });
     } catch {
       return jsonError("Project not found", 404);

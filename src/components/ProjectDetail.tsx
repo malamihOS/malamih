@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useTranslations } from "@/context/LocaleProvider";
 import ProjectInquiryForm from "@/components/ProjectInquiryForm";
 import type { Project, ProjectSection } from "@/data/projects";
+import { hasGalleryImage } from "@/lib/cms/normalize-project";
 import styles from "./ProjectDetail.module.css";
 
 const REVEAL = {
@@ -30,6 +31,8 @@ function ProjectImage({
   sizes: string;
   priority?: boolean;
 }) {
+  if (!hasGalleryImage(src)) return null;
+
   return (
     <div className={`${styles.imageFrame} ${className ?? ""}`}>
       <Image
@@ -45,6 +48,12 @@ function ProjectImage({
 }
 
 function ContentBlock({ section }: { section: ProjectSection }) {
+  const hasContent =
+    Boolean(section?.heading?.trim()) ||
+    (Array.isArray(section?.paragraphs) &&
+      section.paragraphs.some((paragraph) => paragraph.trim()));
+
+  if (!hasContent) return null;
   return (
     <motion.section
       className={styles.contentBlock}
@@ -83,19 +92,21 @@ export default function ProjectDetail({ project }: { project: Project }) {
           <div className={styles.heroMain}>
             <h1 className={styles.title}>{project.title}</h1>
             <p className={styles.summary}>{project.summary}</p>
-            <Link
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.liveButton}
-            >
-              <span>{labels.liveWebsite}</span>
-              <span className={styles.liveIcon} aria-hidden="true" data-mirror-rtl>
-                <svg viewBox="0 0 256 256" focusable="false">
-                  <path d="M218.8,103.8,145.8,30.8a8,8,0,0,0-11.3,11.3l59.4,59.4H40a8,8,0,0,0,0,16H194l-59.4,59.4a8,8,0,0,0,11.3,11.3l73-73a8,8,0,0,0,0-11.3Z" />
-                </svg>
-              </span>
-            </Link>
+            {project.liveUrl ? (
+              <Link
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.liveButton}
+              >
+                <span>{labels.liveWebsite}</span>
+                <span className={styles.liveIcon} aria-hidden="true" data-mirror-rtl>
+                  <svg viewBox="0 0 256 256" focusable="false">
+                    <path d="M218.8,103.8,145.8,30.8a8,8,0,0,0-11.3,11.3l59.4,59.4H40a8,8,0,0,0,0,16H194l-59.4,59.4a8,8,0,0,0,11.3,11.3l73-73a8,8,0,0,0,0-11.3Z" />
+                  </svg>
+                </span>
+              </Link>
+            ) : null}
           </div>
 
           <dl className={styles.metaList}>
@@ -122,25 +133,30 @@ export default function ProjectDetail({ project }: { project: Project }) {
         </div>
       </motion.header>
 
-      <motion.div
-        className={styles.heroImageWrap}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-40px" }}
-        variants={REVEAL}
-      >
-        <ProjectImage
-          src={gallery.hero}
-          alt={project.title}
-          className={styles.heroImage}
-          sizes="100vw"
-          priority
-        />
-      </motion.div>
+      {hasGalleryImage(gallery.hero) ? (
+        <motion.div
+          className={styles.heroImageWrap}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={REVEAL}
+        >
+          <ProjectImage
+            src={gallery.hero}
+            alt={project.title}
+            className={styles.heroImage}
+            sizes="100vw"
+            priority
+          />
+        </motion.div>
+      ) : null}
 
       <div className={styles.body}>
         <ContentBlock section={sections.introduction} />
 
+        {hasGalleryImage(gallery.mosaicOne.tall) ||
+        hasGalleryImage(gallery.mosaicOne.top) ||
+        hasGalleryImage(gallery.mosaicOne.bottom) ? (
         <div className={styles.mosaicOne}>
           <ProjectImage
             src={gallery.mosaicOne.tall}
@@ -163,9 +179,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
             />
           </div>
         </div>
+        ) : null}
 
         <ContentBlock section={sections.challenges} />
 
+        {hasGalleryImage(gallery.mosaicTwo.top) ||
+        hasGalleryImage(gallery.mosaicTwo.bottom) ||
+        hasGalleryImage(gallery.mosaicTwo.tall) ? (
         <div className={styles.mosaicTwo}>
           <div className={styles.mosaicStack}>
             <ProjectImage
@@ -188,9 +208,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
             sizes="(max-width: 768px) 100vw, 50vw"
           />
         </div>
+        ) : null}
 
         <ContentBlock section={sections.finalThoughts} />
 
+        {hasGalleryImage(gallery.wide) ? (
         <motion.div
           className={styles.wideImageWrap}
           initial="hidden"
@@ -205,6 +227,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             sizes="100vw"
           />
         </motion.div>
+        ) : null}
 
         <ProjectInquiryForm projectSlug={project.slug} projectTitle={project.title} />
       </div>

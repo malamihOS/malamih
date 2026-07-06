@@ -7,6 +7,7 @@ import FormField from "@/components/admin/FormField";
 import ImageUpload from "@/components/admin/ImageUpload";
 import SaveButton from "@/components/admin/SaveButton";
 import { adminFetch } from "@/lib/admin-client";
+import { DEFAULT_PROJECT_SECTIONS } from "@/lib/cms/normalize-project";
 import type { Project } from "@prisma/client";
 
 type ProjectFormProps = {
@@ -45,7 +46,9 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
   const [galleryJson, setGalleryJson] = useState(
     project?.galleryJson ?? JSON.stringify(DEFAULT_GALLERY, null, 2),
   );
-  const [sectionsJson, setSectionsJson] = useState(project?.sectionsJson ?? "{}");
+  const [sectionsJson, setSectionsJson] = useState(
+    project?.sectionsJson ?? JSON.stringify(DEFAULT_PROJECT_SECTIONS, null, 2),
+  );
   const [seoTitleEn, setSeoTitleEn] = useState(project?.seoTitleEn ?? "");
   const [seoTitleAr, setSeoTitleAr] = useState(project?.seoTitleAr ?? "");
   const [seoDescEn, setSeoDescEn] = useState(project?.seoDescEn ?? "");
