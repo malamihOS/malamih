@@ -117,10 +117,6 @@ export default function ProjectImagePosition({
           />
         </label>
       </div>
-
-      <p className="admin-inline-hint">
-        Adjust how the image is cropped inside its frame on the project page.
-      </p>
     </div>
   );
 }
