@@ -64,6 +64,12 @@ export default function AdminSidebar({
   );
 
   useEffect(() => {
+    if (!mobileOpen) return;
+
+    setExpandedSections(new Set(sections.map((section) => section.id)));
+  }, [mobileOpen, sections]);
+
+  useEffect(() => {
     const activeSection = sections.find((section) =>
       section.items.some((item) => isActive(pathname, item.href, item.exact)),
     );

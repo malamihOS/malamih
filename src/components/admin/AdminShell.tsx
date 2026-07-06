@@ -23,16 +23,28 @@ export default function AdminShell({ role, email, children }: AdminShellProps) {
   useEffect(() => {
     if (!mobileOpen) return;
 
-    const previousOverflow = document.body.style.overflow;
+    const html = document.documentElement;
+    const previousHtmlOverflow = html.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+
+    html.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      html.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [mobileOpen]);
 
   return (
-    <div className="admin-shell">
+    <div className={`admin-shell${mobileOpen ? " admin-shell--menu-open" : ""}`}>
+      <AdminSidebar
+        role={role}
+        email={email}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
+      />
+
       {mobileOpen ? (
         <button
           type="button"
@@ -41,13 +53,6 @@ export default function AdminShell({ role, email, children }: AdminShellProps) {
           onClick={() => setMobileOpen(false)}
         />
       ) : null}
-
-      <AdminSidebar
-        role={role}
-        email={email}
-        mobileOpen={mobileOpen}
-        onMobileClose={() => setMobileOpen(false)}
-      />
 
       <div className="admin-main">
         <div className="admin-mobile-topbar">
