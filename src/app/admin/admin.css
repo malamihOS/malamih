@@ -282,6 +282,34 @@
   color: #fafafa;
 }
 
+.admin-sidebar-link-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.admin-sidebar-link-label-row .admin-sidebar-link-label {
+  min-width: 0;
+}
+
+.admin-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
+
 .admin-sidebar-link-desc {
   display: block;
   margin-top: 0.15rem;

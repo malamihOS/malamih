@@ -12,10 +12,18 @@ const patchSchema = z.object({
 export async function GET(_request: Request, context: RouteContext) {
   return withAdmin(async () => {
     const { id } = await context.params;
-    const message = await prisma.contactSubmission.findUnique({ where: { id } });
+    let message = await prisma.contactSubmission.findUnique({ where: { id } });
     if (!message) {
       return jsonError("Message not found", 404);
     }
+
+    if (message.status === "new") {
+      message = await prisma.contactSubmission.update({
+        where: { id },
+        data: { status: "read" },
+      });
+    }
+
     return NextResponse.json({ message });
   });
 }

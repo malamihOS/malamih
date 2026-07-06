@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { sendSubmissionAdminNotification } from "@/lib/email";
 import { syncLeadFromSubmission } from "@/lib/leads/sync";
 import { parseUtmFromBody } from "@/lib/leads/utm";
 import { jsonError, getClientIp } from "@/lib/admin-route";
@@ -46,6 +47,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, alreadySubscribed: true });
   }
 
+  const isResubscribe = Boolean(existing);
+
   const lead = await syncLeadFromSubmission({
     fullName: name,
     email,
@@ -71,6 +74,16 @@ export async function POST(request: Request) {
         ...utmFieldsFrom(utm),
       },
     });
+  }
+
+  if (!isResubscribe) {
+    void sendSubmissionAdminNotification({
+      formType: "newsletter",
+      name,
+      email,
+      message: "New newsletter subscription",
+      sourcePage: parsed.data.sourcePage,
+    }).catch(() => {});
   }
 
   return NextResponse.json({ success: true, leadId: lead.id }, { status: 201 });

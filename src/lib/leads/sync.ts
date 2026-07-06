@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { sendSubmissionAdminNotification } from "@/lib/email";
 import { calculateLeadScore, derivePriority } from "@/lib/leads/scoring";
 import type { FormType, UtmParams } from "@/lib/leads/types";
 import { utmFields } from "@/lib/leads/utm";
@@ -136,6 +137,18 @@ export async function createContactSubmissionWithLead(params: {
       ...utmFields(params.utm ?? {}),
     },
   });
+
+  void sendSubmissionAdminNotification({
+    formType: params.formType,
+    name: params.name,
+    email: params.email,
+    phone: params.phone,
+    company: params.company,
+    subject: params.subject,
+    message: params.message,
+    sourcePage: params.sourcePage,
+    metadata: params.metadata,
+  }).catch(() => {});
 
   return { lead, submission };
 }

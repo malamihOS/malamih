@@ -5,6 +5,7 @@ import Link from "next/link";
 import AdminHeader from "@/components/admin/AdminHeader";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { adminFetch } from "@/lib/admin-client";
+import { getFormTypeLabel } from "@/lib/admin-notifications";
 
 type Message = {
   id: string;
@@ -15,6 +16,7 @@ type Message = {
   subject: string;
   message: string;
   status: string;
+  formType: string;
   createdAt: string;
 };
 
@@ -41,7 +43,10 @@ export default function MessagesListPage() {
 
   return (
     <>
-      <AdminHeader title="Messages" subtitle="Contact form submissions from the website." />
+      <AdminHeader
+        title="Messages"
+        subtitle="Contact, inquiries, proposals, landing pages, and other website submissions."
+      />
       <div className="admin-content">
         <div className="admin-filter-bar">
           <label className="admin-label" style={{ margin: 0 }}>Filter:</label>
@@ -67,6 +72,7 @@ export default function MessagesListPage() {
               <thead>
                 <tr>
                   <th>Date</th>
+                  <th>Type</th>
                   <th>Name</th>
                   <th>Email</th>
                   <th>Subject</th>
@@ -78,6 +84,7 @@ export default function MessagesListPage() {
                 {messages.map((msg) => (
                   <tr key={msg.id}>
                     <td>{new Date(msg.createdAt).toLocaleDateString()}</td>
+                    <td>{getFormTypeLabel(msg.formType)}</td>
                     <td>{msg.name}</td>
                     <td>{msg.email}</td>
                     <td>{msg.subject || "—"}</td>

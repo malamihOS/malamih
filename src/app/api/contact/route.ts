@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
-  sendContactAdminNotification,
   sendContactAutoReply,
 } from "@/lib/email";
 import { createContactSubmissionWithLead } from "@/lib/leads/sync";
@@ -65,7 +64,6 @@ export async function POST(request: Request) {
     utm,
   });
 
-  void sendContactAdminNotification(data).catch(() => {});
   void sendContactAutoReply({ name: data.name, email: data.email }).catch(
     () => {},
   );

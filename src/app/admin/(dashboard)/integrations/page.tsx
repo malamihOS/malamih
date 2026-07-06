@@ -195,7 +195,7 @@ export default function IntegrationsPage() {
               label="Admin notification email"
               value={settings.notifyEmail}
               onChange={(v) => update("notifyEmail", v)}
-              hint="Receives new contact form submissions. Can be the same Gmail address or another inbox."
+              hint="Receives contact, inquiry, proposal, newsletter, and all other website submissions."
             />
           </div>
 

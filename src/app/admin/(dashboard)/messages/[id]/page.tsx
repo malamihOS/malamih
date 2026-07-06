@@ -6,6 +6,7 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import SaveButton from "@/components/admin/SaveButton";
 import StatusBadge from "@/components/admin/StatusBadge";
 import { adminFetch } from "@/lib/admin-client";
+import { getFormTypeLabel } from "@/lib/admin-notifications";
 
 type Message = {
   id: string;
@@ -16,6 +17,8 @@ type Message = {
   subject: string;
   message: string;
   status: string;
+  formType: string;
+  sourcePage: string;
   createdAt: string;
 };
 
@@ -102,7 +105,9 @@ export default function MessageDetailPage({ params }: PageProps) {
       <AdminHeader title={`Message from ${message.name}`} />
       <div className="admin-content">
         <div className="admin-card">
+          <p><strong>Type:</strong> {getFormTypeLabel(message.formType)}</p>
           <p><strong>Date:</strong> {new Date(message.createdAt).toLocaleString()}</p>
+          {message.sourcePage ? <p><strong>Source page:</strong> {message.sourcePage}</p> : null}
           <p><strong>Status:</strong> <StatusBadge status={message.status} /></p>
           <p><strong>Name:</strong> {message.name}</p>
           <p><strong>Email:</strong> <a href={`mailto:${message.email}`}>{message.email}</a></p>

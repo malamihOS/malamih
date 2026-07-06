@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { isGmailSmtpConfig } from "@/lib/gmail-smtp";
+import type { FormType } from "@/lib/leads/types";
 import { prisma } from "@/lib/prisma";
 
 type SmtpConfig = {
@@ -9,6 +10,18 @@ type SmtpConfig = {
   pass: string;
   fromEmail: string;
   fromName: string;
+};
+
+const FORM_TYPE_LABELS: Record<FormType, string> = {
+  contact: "Contact form",
+  service_inquiry: "Service inquiry",
+  project_inquiry: "Project inquiry",
+  blog_cta: "Blog CTA",
+  newsletter: "Newsletter signup",
+  lead_magnet: "Lead magnet download",
+  proposal: "Proposal request",
+  landing_page: "Landing page",
+  manual: "Manual entry",
 };
 
 async function getSmtpConfig(): Promise<SmtpConfig | null> {
@@ -28,6 +41,16 @@ async function getSmtpConfig(): Promise<SmtpConfig | null> {
     fromEmail,
     fromName: settings.smtpFromName || "Malamih Creative Company",
   };
+}
+
+export async function getNotificationEmail(): Promise<string> {
+  const settings = await prisma.siteSettings.findFirst();
+  return (
+    settings?.notifyEmail?.trim() ||
+    settings?.smtpFromEmail?.trim() ||
+    process.env.ADMIN_EMAIL?.trim() ||
+    ""
+  );
 }
 
 function createTransporter(config: SmtpConfig) {
@@ -75,6 +98,51 @@ async function sendMail(options: {
   return { sent: true };
 }
 
+export async function sendSubmissionAdminNotification(data: {
+  formType: FormType;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  subject?: string;
+  message: string;
+  sourcePage?: string;
+  metadata?: Record<string, unknown>;
+}) {
+  const to = await getNotificationEmail();
+  if (!to) return { sent: false, reason: "No notification email configured" };
+
+  const formLabel = FORM_TYPE_LABELS[data.formType] ?? "Website submission";
+  const subjectLine = data.subject?.trim() || data.name;
+  const metadataLines =
+    data.metadata && Object.keys(data.metadata).length > 0
+      ? [
+          "",
+          "Details:",
+          ...Object.entries(data.metadata).map(([key, value]) => `${key}: ${String(value)}`),
+        ]
+      : [];
+
+  return sendMail({
+    to,
+    subject: `[Malamih] ${formLabel}: ${subjectLine}`,
+    text: [
+      `New ${formLabel.toLowerCase()}`,
+      ``,
+      `Name: ${data.name}`,
+      `Email: ${data.email}`,
+      `Phone: ${data.phone || "—"}`,
+      `Company: ${data.company || "—"}`,
+      `Subject: ${data.subject || "—"}`,
+      `Source page: ${data.sourcePage || "—"}`,
+      ...metadataLines,
+      ``,
+      `Message:`,
+      data.message,
+    ].join("\n"),
+  });
+}
+
 export async function sendContactAdminNotification(data: {
   name: string;
   email: string;
@@ -82,31 +150,11 @@ export async function sendContactAdminNotification(data: {
   company: string;
   subject: string;
   message: string;
+  sourcePage?: string;
 }) {
-  const settings = await prisma.siteSettings.findFirst();
-  const to =
-    settings?.notifyEmail ||
-    settings?.smtpFromEmail ||
-    process.env.ADMIN_EMAIL ||
-    "";
-
-  if (!to) return { sent: false, reason: "No notification email configured" };
-
-  return sendMail({
-    to,
-    subject: `[Malamih] New contact: ${data.subject || data.name}`,
-    text: [
-      `New contact form submission`,
-      ``,
-      `Name: ${data.name}`,
-      `Email: ${data.email}`,
-      `Phone: ${data.phone || "—"}`,
-      `Company: ${data.company || "—"}`,
-      `Subject: ${data.subject || "—"}`,
-      ``,
-      `Message:`,
-      data.message,
-    ].join("\n"),
+  return sendSubmissionAdminNotification({
+    formType: "contact",
+    ...data,
   });
 }
 

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import AdminBrandLogo from "@/components/admin/AdminBrandLogo";
 import { ADMIN_NAV_SECTIONS, getNavPermission } from "@/lib/admin-nav";
+import type { AdminNotificationCounts } from "@/lib/admin-notifications";
 import {
   hasPermission,
   getRoleLabel,
@@ -34,6 +35,40 @@ export default function AdminSidebar({
   const [sessionEmail, setSessionEmail] = useState(email ?? "");
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(() => new Set());
+  const [notificationCounts, setNotificationCounts] = useState<AdminNotificationCounts>({
+    "/admin/messages": 0,
+    "/admin/leads": 0,
+    "/admin/proposals": 0,
+  });
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadNotifications() {
+      try {
+        const response = await fetch("/api/admin/notifications");
+        if (!response.ok) return;
+        const data = (await response.json()) as { counts?: AdminNotificationCounts };
+        if (active && data.counts) {
+          setNotificationCounts(data.counts);
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }
+
+    void loadNotifications();
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === "visible") {
+        void loadNotifications();
+      }
+    }, 30000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     if (!email) {
@@ -186,6 +221,7 @@ export default function AdminSidebar({
                     {section.items.map((item) => {
                       const active = isActive(pathname, item.href, item.exact);
                       const pending = pendingHref === item.href && !active;
+                      const badgeCount = notificationCounts[item.href as keyof AdminNotificationCounts] ?? 0;
 
                       return (
                         <Link
@@ -198,7 +234,14 @@ export default function AdminSidebar({
                           aria-current={active ? "page" : undefined}
                         >
                           <span className="admin-sidebar-link-main">
-                            <span className="admin-sidebar-link-label">{item.label}</span>
+                            <span className="admin-sidebar-link-label-row">
+                              <span className="admin-sidebar-link-label">{item.label}</span>
+                              {badgeCount > 0 ? (
+                                <span className="admin-nav-badge" aria-label={`${badgeCount} new`}>
+                                  {badgeCount > 99 ? "99+" : badgeCount}
+                                </span>
+                              ) : null}
+                            </span>
                             {item.description ? (
                               <span className="admin-sidebar-link-desc">{item.description}</span>
                             ) : null}

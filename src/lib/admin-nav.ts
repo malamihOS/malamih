@@ -53,7 +53,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     description: "Contact & inbox",
     items: [
       { href: "/admin/contact", label: "Contact settings", description: "Address, email & social" },
-      { href: "/admin/messages", label: "Messages", description: "Contact form inbox" },
+      { href: "/admin/messages", label: "Messages", description: "Inbox for all form submissions" },
     ],
   },
   {
