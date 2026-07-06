@@ -481,6 +481,19 @@
   color: var(--admin-muted);
 }
 
+.admin-project-subsection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-project-subsection-title {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+}
+
 .admin-card-title {
   font-size: 1rem;
   font-weight: 600;

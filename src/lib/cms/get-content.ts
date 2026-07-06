@@ -582,6 +582,7 @@ function buildProjectItems(
 
     const sections = normalizeProjectSections(
       parseJson<Partial<ProjectContent["sections"]>>(project.sectionsJson, {}),
+      locale,
     );
 
     items[project.slug] = {
@@ -834,7 +835,7 @@ function buildProjects(
         liveUrl: project.projectUrl,
         cardImage: mediaUrl(project.coverImage) || gallery.hero,
         gallery,
-        sections: normalizeProjectSections(rawSections),
+        sections: normalizeProjectSections(rawSections, locale),
         clientName: project.clientName,
         servicesUsed: parseJson<string[]>(project.servicesUsed, []),
         seoTitle: pick(project.seoTitleEn, project.seoTitleAr, locale),

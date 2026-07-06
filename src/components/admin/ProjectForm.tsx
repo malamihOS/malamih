@@ -7,7 +7,20 @@ import FormField from "@/components/admin/FormField";
 import ImageUpload from "@/components/admin/ImageUpload";
 import SaveButton from "@/components/admin/SaveButton";
 import { adminFetch } from "@/lib/admin-client";
-import { DEFAULT_PROJECT_SECTIONS } from "@/lib/cms/normalize-project";
+import {
+  PROJECT_SECTION_KEYS,
+  PROJECT_SECTION_META,
+  parseGalleryFromProject,
+  parseSectionsFromProject,
+  parseServicesField,
+  serializeGallery,
+  serializeSections,
+  serializeServicesField,
+  type GalleryFormState,
+  type ProjectSectionKey,
+  type SectionFormState,
+  type SectionsFormState,
+} from "@/lib/cms/project-form";
 import type { Project } from "@prisma/client";
 
 type ProjectFormProps = {
@@ -15,12 +28,55 @@ type ProjectFormProps = {
   onSaved?: (id: string) => void;
 };
 
-const DEFAULT_GALLERY = {
-  hero: "",
-  mosaicOne: { tall: "", top: "", bottom: "" },
-  mosaicTwo: { top: "", bottom: "", tall: "" },
-  wide: "",
-};
+function ProjectSectionEditor({
+  sectionKey,
+  section,
+  onChange,
+}: {
+  sectionKey: ProjectSectionKey;
+  section: SectionFormState;
+  onChange: (next: SectionFormState) => void;
+}) {
+  const meta = PROJECT_SECTION_META[sectionKey];
+
+  return (
+    <div className="admin-project-subsection">
+      <h3 className="admin-project-subsection-title">{meta.title}</h3>
+      <BilingualField
+        label="Section label"
+        enName={`${sectionKey}LabelEn`}
+        arName={`${sectionKey}LabelAr`}
+        enValue={section.labelEn}
+        arValue={section.labelAr}
+        onEnChange={(value) => onChange({ ...section, labelEn: value })}
+        onArChange={(value) => onChange({ ...section, labelAr: value })}
+      />
+      <BilingualField
+        label="Heading"
+        enName={`${sectionKey}HeadingEn`}
+        arName={`${sectionKey}HeadingAr`}
+        enValue={section.headingEn}
+        arValue={section.headingAr}
+        onEnChange={(value) => onChange({ ...section, headingEn: value })}
+        onArChange={(value) => onChange({ ...section, headingAr: value })}
+        multiline
+      />
+      <BilingualField
+        label="Paragraphs"
+        enName={`${sectionKey}ParagraphsEn`}
+        arName={`${sectionKey}ParagraphsAr`}
+        enValue={section.paragraphsEn}
+        arValue={section.paragraphsAr}
+        onEnChange={(value) => onChange({ ...section, paragraphsEn: value })}
+        onArChange={(value) => onChange({ ...section, paragraphsAr: value })}
+        multiline
+      />
+      <p className="admin-inline-hint">
+        Separate paragraphs with a blank line — each block becomes its own paragraph on the project page.
+      </p>
+    </div>
+  );
+}
 
 export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
   const router = useRouter();
@@ -39,15 +95,17 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
   const [spaceOfWorkAr, setSpaceOfWorkAr] = useState(project?.spaceOfWorkAr ?? "");
   const [timeline, setTimeline] = useState(project?.timeline ?? "");
   const [clientName, setClientName] = useState(project?.clientName ?? "");
-  const [servicesUsed, setServicesUsed] = useState(project?.servicesUsed ?? "[]");
+  const [servicesUsed, setServicesUsed] = useState(
+    parseServicesField(project?.servicesUsed ?? "[]"),
+  );
   const [year, setYear] = useState(project?.year ?? "");
   const [projectUrl, setProjectUrl] = useState(project?.projectUrl ?? "");
   const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
-  const [galleryJson, setGalleryJson] = useState(
-    project?.galleryJson ?? JSON.stringify(DEFAULT_GALLERY, null, 2),
+  const [gallery, setGallery] = useState<GalleryFormState>(() =>
+    parseGalleryFromProject(project?.galleryJson, project?.coverImage ?? ""),
   );
-  const [sectionsJson, setSectionsJson] = useState(
-    project?.sectionsJson ?? JSON.stringify(DEFAULT_PROJECT_SECTIONS, null, 2),
+  const [sections, setSections] = useState<SectionsFormState>(() =>
+    parseSectionsFromProject(project?.sectionsJson),
   );
   const [seoTitleEn, setSeoTitleEn] = useState(project?.seoTitleEn ?? "");
   const [seoTitleAr, setSeoTitleAr] = useState(project?.seoTitleAr ?? "");
@@ -64,18 +122,27 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  function buildPayload() {
-    let gallery: unknown;
-    let sections: unknown;
-    let services: unknown;
+  function updateSection(sectionKey: ProjectSectionKey, next: SectionFormState) {
+    setSections((current) => ({ ...current, [sectionKey]: next }));
+  }
 
-    try {
-      gallery = JSON.parse(galleryJson);
-      sections = JSON.parse(sectionsJson);
-      services = JSON.parse(servicesUsed);
-    } catch {
-      throw new Error("Invalid JSON in gallery, sections, or services fields");
-    }
+  function updateMosaicOne(field: keyof GalleryFormState["mosaicOne"], value: string) {
+    setGallery((current) => ({
+      ...current,
+      mosaicOne: { ...current.mosaicOne, [field]: value },
+    }));
+  }
+
+  function updateMosaicTwo(field: keyof GalleryFormState["mosaicTwo"], value: string) {
+    setGallery((current) => ({
+      ...current,
+      mosaicTwo: { ...current.mosaicTwo, [field]: value },
+    }));
+  }
+
+  function buildPayload() {
+    const effectiveCover = coverImage || gallery.hero;
+    const galleryPayload = serializeGallery(gallery, effectiveCover);
 
     return {
       slug,
@@ -91,12 +158,12 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
       spaceOfWorkAr,
       timeline,
       clientName,
-      servicesUsed: services,
+      servicesUsed: serializeServicesField(servicesUsed),
       year,
       projectUrl,
-      coverImage,
-      galleryJson: gallery,
-      sectionsJson: sections,
+      coverImage: effectiveCover,
+      galleryJson: galleryPayload,
+      sectionsJson: serializeSections(sections),
       seoTitleEn,
       seoTitleAr,
       seoDescEn,
@@ -157,14 +224,50 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
     <form onSubmit={handleSubmit}>
       <div className="admin-card">
         <h2 className="admin-card-title">Basic info</h2>
-        <FormField label="Slug" value={slug} onChange={setSlug} required hint="URL-friendly identifier, e.g. urban-glow" />
-        <BilingualField label="Title" enName="titleEn" arName="titleAr" enValue={titleEn} arValue={titleAr} onEnChange={setTitleEn} onArChange={setTitleAr} required />
-        <BilingualField label="Short description" enName="shortDescEn" arName="shortDescAr" enValue={shortDescEn} arValue={shortDescAr} onEnChange={setShortDescEn} onArChange={setShortDescAr} multiline />
-        <BilingualField label="Category" enName="categoryEn" arName="categoryAr" enValue={categoryEn} arValue={categoryAr} onEnChange={setCategoryEn} onArChange={setCategoryAr} />
+        <FormField
+          label="Slug"
+          value={slug}
+          onChange={setSlug}
+          required
+          hint="URL-friendly identifier, e.g. wild-tiger"
+        />
+        <BilingualField
+          label="Title"
+          enName="titleEn"
+          arName="titleAr"
+          enValue={titleEn}
+          arValue={titleAr}
+          onEnChange={setTitleEn}
+          onArChange={setTitleAr}
+          required
+        />
+        <BilingualField
+          label="Short description"
+          enName="shortDescEn"
+          arName="shortDescAr"
+          enValue={shortDescEn}
+          arValue={shortDescAr}
+          onEnChange={setShortDescEn}
+          onArChange={setShortDescAr}
+          multiline
+        />
+        <BilingualField
+          label="Category"
+          enName="categoryEn"
+          arName="categoryAr"
+          enValue={categoryEn}
+          arValue={categoryAr}
+          onEnChange={setCategoryEn}
+          onArChange={setCategoryAr}
+        />
         <div className="admin-grid admin-grid-2">
           <div className="admin-form-group">
             <label className="admin-label">Status</label>
-            <select className="admin-select" value={status} onChange={(e) => setStatus(e.target.value as "draft" | "published")}>
+            <select
+              className="admin-select"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as "draft" | "published")}
+            >
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </select>
@@ -172,43 +275,168 @@ export default function ProjectForm({ project, onSaved }: ProjectFormProps) {
           <FormField label="Sort order" value={sortOrder} onChange={setSortOrder} type="number" />
         </div>
         <label className="admin-checkbox-row">
-          <input type="checkbox" checked={showOnHomepage} onChange={(e) => setShowOnHomepage(e.target.checked)} />
+          <input
+            type="checkbox"
+            checked={showOnHomepage}
+            onChange={(e) => setShowOnHomepage(e.target.checked)}
+          />
           Show on homepage
         </label>
       </div>
 
       <div className="admin-card">
         <h2 className="admin-card-title">Project details</h2>
-        <BilingualField label="Industry" enName="industryEn" arName="industryAr" enValue={industryEn} arValue={industryAr} onEnChange={setIndustryEn} onArChange={setIndustryAr} />
-        <BilingualField label="Space of work" enName="spaceEn" arName="spaceAr" enValue={spaceOfWorkEn} arValue={spaceOfWorkAr} onEnChange={setSpaceOfWorkEn} onArChange={setSpaceOfWorkAr} />
+        <BilingualField
+          label="Industry"
+          enName="industryEn"
+          arName="industryAr"
+          enValue={industryEn}
+          arValue={industryAr}
+          onEnChange={setIndustryEn}
+          onArChange={setIndustryAr}
+        />
+        <BilingualField
+          label="Space of work"
+          enName="spaceEn"
+          arName="spaceAr"
+          enValue={spaceOfWorkEn}
+          arValue={spaceOfWorkAr}
+          onEnChange={setSpaceOfWorkEn}
+          onArChange={setSpaceOfWorkAr}
+        />
         <FormField label="Timeline" value={timeline} onChange={setTimeline} />
         <FormField label="Year" value={year} onChange={setYear} />
         <FormField label="Client name" value={clientName} onChange={setClientName} />
         <FormField label="Project URL" value={projectUrl} onChange={setProjectUrl} />
-        <FormField label="Services used (JSON array)" value={servicesUsed} onChange={setServicesUsed} multiline hint='e.g. ["Branding", "Web Design"]' />
+        <FormField
+          label="Services used"
+          value={servicesUsed}
+          onChange={setServicesUsed}
+          hint='Comma-separated, e.g. Branding, Web Design, Photography'
+        />
       </div>
 
       <div className="admin-card">
-        <h2 className="admin-card-title">Media</h2>
-        <ImageUpload label="Cover image" value={coverImage} onChange={setCoverImage} />
-        <FormField label="Gallery JSON" value={galleryJson} onChange={setGalleryJson} multiline hint="hero, mosaicOne, mosaicTwo, wide structure from seed" />
+        <div className="admin-card-head">
+          <h2 className="admin-card-title">Page gallery</h2>
+          <p className="admin-card-desc">
+            Upload images in the same layout as the Lumeo demo — hero, two mosaic groups, and a wide image.
+          </p>
+        </div>
+        <ImageUpload
+          label="Cover image (project card)"
+          value={coverImage}
+          onChange={setCoverImage}
+          hint="Shown on the projects list and homepage cards."
+        />
+        <ImageUpload
+          label="Hero image"
+          value={gallery.hero}
+          onChange={(value) => setGallery((current) => ({ ...current, hero: value }))}
+          hint="Large image at the top of the project page. Uses cover image if left empty."
+        />
+
+        <div className="admin-project-subsection">
+          <h3 className="admin-project-subsection-title">Mosaic group 1</h3>
+          <div className="admin-grid admin-grid-3">
+            <ImageUpload
+              label="Tall (left)"
+              value={gallery.mosaicOne.tall}
+              onChange={(value) => updateMosaicOne("tall", value)}
+            />
+            <ImageUpload
+              label="Top (right)"
+              value={gallery.mosaicOne.top}
+              onChange={(value) => updateMosaicOne("top", value)}
+            />
+            <ImageUpload
+              label="Bottom (right)"
+              value={gallery.mosaicOne.bottom}
+              onChange={(value) => updateMosaicOne("bottom", value)}
+            />
+          </div>
+        </div>
+
+        <div className="admin-project-subsection">
+          <h3 className="admin-project-subsection-title">Mosaic group 2</h3>
+          <div className="admin-grid admin-grid-3">
+            <ImageUpload
+              label="Top (left)"
+              value={gallery.mosaicTwo.top}
+              onChange={(value) => updateMosaicTwo("top", value)}
+            />
+            <ImageUpload
+              label="Bottom (left)"
+              value={gallery.mosaicTwo.bottom}
+              onChange={(value) => updateMosaicTwo("bottom", value)}
+            />
+            <ImageUpload
+              label="Tall (right)"
+              value={gallery.mosaicTwo.tall}
+              onChange={(value) => updateMosaicTwo("tall", value)}
+            />
+          </div>
+        </div>
+
+        <div className="admin-project-subsection">
+          <ImageUpload
+            label="Wide image"
+            value={gallery.wide}
+            onChange={(value) => setGallery((current) => ({ ...current, wide: value }))}
+            hint="Full-width image before the text sections."
+          />
+        </div>
       </div>
 
       <div className="admin-card">
-        <h2 className="admin-card-title">Content sections</h2>
-        <FormField label="Sections JSON" value={sectionsJson} onChange={setSectionsJson} multiline hint="introduction, challenges, finalThoughts with label/heading/paragraphs" />
+        <div className="admin-card-head">
+          <h2 className="admin-card-title">Content sections</h2>
+          <p className="admin-card-desc">
+            Introduction, challenges, and final thoughts — same structure as the Lumeo project page.
+          </p>
+        </div>
+        {PROJECT_SECTION_KEYS.map((sectionKey) => (
+          <ProjectSectionEditor
+            key={sectionKey}
+            sectionKey={sectionKey}
+            section={sections[sectionKey]}
+            onChange={(next) => updateSection(sectionKey, next)}
+          />
+        ))}
       </div>
 
       <div className="admin-card">
         <h2 className="admin-card-title">SEO</h2>
-        <BilingualField label="SEO title" enName="seoTitleEn" arName="seoTitleAr" enValue={seoTitleEn} arValue={seoTitleAr} onEnChange={setSeoTitleEn} onArChange={setSeoTitleAr} />
-        <BilingualField label="SEO description" enName="seoDescEn" arName="seoDescAr" enValue={seoDescEn} arValue={seoDescAr} onEnChange={setSeoDescEn} onArChange={setSeoDescAr} multiline />
+        <BilingualField
+          label="SEO title"
+          enName="seoTitleEn"
+          arName="seoTitleAr"
+          enValue={seoTitleEn}
+          arValue={seoTitleAr}
+          onEnChange={setSeoTitleEn}
+          onArChange={setSeoTitleAr}
+        />
+        <BilingualField
+          label="SEO description"
+          enName="seoDescEn"
+          arName="seoDescAr"
+          enValue={seoDescEn}
+          arValue={seoDescAr}
+          onEnChange={setSeoDescEn}
+          onArChange={setSeoDescAr}
+          multiline
+        />
       </div>
 
       <div className="admin-form-actions">
         <SaveButton loading={loading} error={error} success={success} />
         {isEdit ? (
-          <button type="button" className="admin-btn admin-btn-danger" disabled={deleting} onClick={() => void handleDelete()}>
+          <button
+            type="button"
+            className="admin-btn admin-btn-danger"
+            disabled={deleting}
+            onClick={() => void handleDelete()}
+          >
             {deleting ? "Deleting…" : "Delete project"}
           </button>
         ) : null}

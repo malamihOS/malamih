@@ -1,6 +1,19 @@
 import type { CmsProjectGallery } from "@/lib/cms/types";
+import type { Locale } from "@/i18n/config";
 import type { ProjectContent, ProjectSectionContent } from "@/i18n/types";
 import { normalizeUploadUrl } from "@/lib/media-url";
+
+type StoredProjectSection = {
+  label?: string;
+  heading?: string;
+  paragraphs?: string[];
+  labelEn?: string;
+  labelAr?: string;
+  headingEn?: string;
+  headingAr?: string;
+  paragraphsEn?: string[];
+  paragraphsAr?: string[];
+};
 
 const EMPTY_SECTION: ProjectSectionContent = {
   label: "",
@@ -14,6 +27,18 @@ export const DEFAULT_PROJECT_SECTIONS: ProjectContent["sections"] = {
   finalThoughts: { ...EMPTY_SECTION, label: "Final thoughts" },
 };
 
+function pickLocaleText(
+  en: string | undefined,
+  ar: string | undefined,
+  locale: Locale,
+  legacy?: string,
+): string {
+  if (locale === "ar") {
+    return ar ?? legacy ?? en ?? "";
+  }
+  return en ?? legacy ?? ar ?? "";
+}
+
 function normalizeSection(
   section: Partial<ProjectSectionContent> | undefined,
   fallbackLabel: string,
@@ -25,13 +50,64 @@ function normalizeSection(
   };
 }
 
+function normalizeStoredSection(
+  section: StoredProjectSection | undefined,
+  fallbackLabel: string,
+  locale: Locale,
+): ProjectSectionContent {
+  const hasBilingual =
+    section?.labelEn !== undefined ||
+    section?.labelAr !== undefined ||
+    section?.headingEn !== undefined ||
+    section?.headingAr !== undefined ||
+    section?.paragraphsEn !== undefined ||
+    section?.paragraphsAr !== undefined;
+
+  if (!hasBilingual) {
+    return normalizeSection(section, fallbackLabel);
+  }
+
+  const paragraphs =
+    locale === "ar"
+      ? (section.paragraphsAr ?? section.paragraphs ?? [])
+      : (section.paragraphsEn ?? section.paragraphs ?? []);
+
+  return {
+    label:
+      pickLocaleText(section.labelEn, section.labelAr, locale, section.label) ||
+      fallbackLabel,
+    heading: pickLocaleText(
+      section.headingEn,
+      section.headingAr,
+      locale,
+      section.heading,
+    ),
+    paragraphs: Array.isArray(paragraphs) ? paragraphs : [],
+  };
+}
+
 export function normalizeProjectSections(
   raw: Partial<ProjectContent["sections"]> | null | undefined,
+  locale: Locale = "en",
 ): ProjectContent["sections"] {
+  const stored = raw as Partial<Record<keyof ProjectContent["sections"], StoredProjectSection>>;
+
   return {
-    introduction: normalizeSection(raw?.introduction, DEFAULT_PROJECT_SECTIONS.introduction.label),
-    challenges: normalizeSection(raw?.challenges, DEFAULT_PROJECT_SECTIONS.challenges.label),
-    finalThoughts: normalizeSection(raw?.finalThoughts, DEFAULT_PROJECT_SECTIONS.finalThoughts.label),
+    introduction: normalizeStoredSection(
+      stored?.introduction,
+      DEFAULT_PROJECT_SECTIONS.introduction.label,
+      locale,
+    ),
+    challenges: normalizeStoredSection(
+      stored?.challenges,
+      DEFAULT_PROJECT_SECTIONS.challenges.label,
+      locale,
+    ),
+    finalThoughts: normalizeStoredSection(
+      stored?.finalThoughts,
+      DEFAULT_PROJECT_SECTIONS.finalThoughts.label,
+      locale,
+    ),
   };
 }
 
