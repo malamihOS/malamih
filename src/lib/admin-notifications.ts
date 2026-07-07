@@ -30,7 +30,6 @@ export const FORM_TYPE_LABELS: Record<string, string> = {
   project_inquiry: "Project inquiry",
   proposal: "Proposal",
   landing_page: "Landing page",
-  lead_magnet: "Lead magnet",
   newsletter: "Newsletter",
   blog_cta: "Blog CTA",
   manual: "Manual",

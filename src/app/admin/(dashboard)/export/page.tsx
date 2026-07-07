@@ -7,7 +7,6 @@ const EXPORT_ITEMS = [
   { type: "leads", label: "Leads CRM", formats: ["csv"] },
   { type: "newsletter", label: "Newsletter subscribers", formats: ["csv"] },
   { type: "proposals", label: "Proposal requests", formats: ["csv"] },
-  { type: "lead-magnet-downloads", label: "Lead magnet downloads", formats: ["csv"] },
   { type: "projects", label: "Projects", formats: ["json", "csv"] },
   { type: "blog", label: "Blog posts", formats: ["json", "csv"] },
   { type: "messages", label: "Contact submissions", formats: ["json", "csv"] },

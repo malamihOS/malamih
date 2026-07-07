@@ -625,15 +625,6 @@ export const en: Dictionary = {
       submit: "Submit request",
       success: "Thank you! Your proposal request has been received.",
     },
-    leadMagnet: {
-      download: "Download free resource",
-      name: "Your name",
-      email: "Your email",
-      phone: "Phone (optional)",
-      company: "Company (optional)",
-      submit: "Get download",
-      success: "Thank you! Your download is ready.",
-    },
     projectInquiry: {
       title: "Project inquiry",
       submit: "Send inquiry",

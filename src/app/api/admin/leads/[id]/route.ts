@@ -29,7 +29,6 @@ export async function GET(_request: Request, context: RouteContext) {
         include: {
           submissions: { orderBy: { createdAt: "desc" }, take: 10 },
           proposals: { orderBy: { createdAt: "desc" } },
-          magnetDownloads: { orderBy: { createdAt: "desc" }, take: 5 },
         },
       });
       if (!lead) return jsonError("Lead not found", 404);

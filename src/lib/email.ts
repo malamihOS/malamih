@@ -18,7 +18,6 @@ const FORM_TYPE_LABELS: Record<FormType, string> = {
   project_inquiry: "Project inquiry",
   blog_cta: "Blog CTA",
   newsletter: "Newsletter signup",
-  lead_magnet: "Lead magnet download",
   proposal: "Proposal request",
   landing_page: "Landing page",
   manual: "Manual entry",

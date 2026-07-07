@@ -13,7 +13,6 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:blog": "tsx prisma/seed-blog.ts",
     "db:seed:seo": "tsx prisma/seed-seo.ts",
-    "db:seed:growth": "tsx prisma/seed-growth.ts",
     "db:seed:team": "tsx prisma/seed-team.ts",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"

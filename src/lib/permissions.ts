@@ -20,7 +20,6 @@ export type Permission =
   | "users"
   | "leads"
   | "newsletter"
-  | "lead_magnets"
   | "proposals"
   | "landing_pages";
 
@@ -45,7 +44,6 @@ const ROLE_PERMISSIONS: Record<AdminRole, Permission[] | ["*"]> = {
     "export",
     "leads",
     "newsletter",
-    "lead_magnets",
     "proposals",
     "landing_pages",
   ],
@@ -95,7 +93,6 @@ export const NAV_PERMISSIONS: Record<string, Permission> = {
   "/admin/users": "users",
   "/admin/leads": "leads",
   "/admin/newsletter": "newsletter",
-  "/admin/lead-magnets": "lead_magnets",
   "/admin/proposals": "proposals",
   "/admin/landing-pages": "landing_pages",
 };

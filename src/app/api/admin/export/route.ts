@@ -66,12 +66,6 @@ export async function GET(request: Request) {
           });
           filename = "proposal-requests";
           break;
-        case "lead-magnet-downloads":
-          data = await prisma.leadMagnetDownload.findMany({
-            orderBy: { createdAt: "desc" },
-          });
-          filename = "lead-magnet-downloads";
-          break;
         case "services":
           data = await prisma.service.findMany({ orderBy: { sortOrder: "asc" } });
           filename = "services";

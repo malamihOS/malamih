@@ -30,7 +30,6 @@ const SOURCE_SCORES: Record<string, number> = {
   service_inquiry: 18,
   project_inquiry: 20,
   proposal_request: 25,
-  lead_magnet: 10,
   newsletter: 5,
   blog_cta: 8,
   landing_page: 15,

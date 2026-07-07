@@ -6,7 +6,6 @@ import {
   getBlogTags,
 } from "@/lib/blog/get-posts";
 import { getAllPublishedProjectSlugs } from "@/lib/cms/get-content";
-import { prisma } from "@/lib/prisma";
 import { absoluteUrl } from "@/lib/seo/urls";
 
 const STATIC_PAGES: Array<{
@@ -58,31 +57,18 @@ export function getFallbackSitemapEntries(): MetadataRoute.Sitemap {
   );
 }
 
-async function getResourceSlugs(): Promise<string[]> {
-  try {
-    const resources = await prisma.leadMagnet.findMany({
-      where: { status: "active" },
-      select: { slug: true },
-    });
-    return resources.map((resource) => resource.slug);
-  } catch {
-    return [];
-  }
-}
-
 export async function getSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const entries: MetadataRoute.Sitemap = STATIC_PAGES.flatMap((page) =>
     createLocalizedEntries(page.path, page.changeFrequency, page.priority, now),
   );
 
-  const [projectResult, blogResult, categoryResult, tagResult, resourceResult] =
+  const [projectResult, blogResult, categoryResult, tagResult] =
     await Promise.allSettled([
       getAllPublishedProjectSlugs(),
       getAllPublishedBlogSlugs(),
       getBlogCategories("en"),
       getBlogTags("en"),
-      getResourceSlugs(),
     ]);
 
   const projectSlugs =
@@ -91,8 +77,6 @@ export async function getSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const categories =
     categoryResult.status === "fulfilled" ? categoryResult.value : [];
   const tags = tagResult.status === "fulfilled" ? tagResult.value : [];
-  const resourceSlugs =
-    resourceResult.status === "fulfilled" ? resourceResult.value : [];
 
   for (const slug of projectSlugs) {
     entries.push(
@@ -121,12 +105,6 @@ export async function getSitemapEntries(): Promise<MetadataRoute.Sitemap> {
     const encodedTag = encodeURIComponent(tag.toLowerCase());
     entries.push(
       ...createLocalizedEntries(`/blog/tag/${encodedTag}`, "weekly", 0.55, now),
-    );
-  }
-
-  for (const slug of resourceSlugs) {
-    entries.push(
-      ...createLocalizedEntries(`/resources/${slug}`, "monthly", 0.65, now),
     );
   }
 

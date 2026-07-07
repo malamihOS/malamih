@@ -261,15 +261,6 @@ export type Dictionary = {
       submit: string;
       success: string;
     };
-    leadMagnet: {
-      download: string;
-      name: string;
-      email: string;
-      phone: string;
-      company: string;
-      submit: string;
-      success: string;
-    };
     projectInquiry: {
       title: string;
       submit: string;

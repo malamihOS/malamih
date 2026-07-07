@@ -837,15 +837,6 @@ export const ar: Dictionary = {
       submit: "إرسال الطلب",
       success: "شكرًا! تم استلام طلب العرض.",
     },
-    leadMagnet: {
-      download: "تحميل المورد المجاني",
-      name: "اسمك",
-      email: "بريدك الإلكتروني",
-      phone: "الهاتف (اختياري)",
-      company: "الشركة (اختياري)",
-      submit: "احصل على التحميل",
-      success: "شكرًا! التحميل جاهز.",
-    },
     projectInquiry: {
       title: "استفسار عن مشروع",
       submit: "إرسال الاستفسار",

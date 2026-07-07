@@ -25,7 +25,6 @@ export type FormType =
   | "project_inquiry"
   | "blog_cta"
   | "newsletter"
-  | "lead_magnet"
   | "proposal"
   | "landing_page"
   | "manual";

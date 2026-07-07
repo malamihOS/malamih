@@ -63,7 +63,6 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
     items: [
       { href: "/admin/leads", label: "Leads CRM", description: "Pipeline & follow-ups" },
       { href: "/admin/newsletter", label: "Newsletter", description: "Subscribers list" },
-      { href: "/admin/lead-magnets", label: "Lead magnets", description: "Download resources" },
       { href: "/admin/proposals", label: "Proposals", description: "Proposal requests" },
       { href: "/admin/landing-pages", label: "Landing pages", description: "Campaign pages" },
     ],

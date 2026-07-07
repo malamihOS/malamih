@@ -337,7 +337,6 @@ model Lead {
   updatedAt          DateTime  @default(now()) @updatedAt
   submissions        ContactSubmission[]
   newsletterSubs     NewsletterSubscriber[]
-  magnetDownloads    LeadMagnetDownload[]
   proposals          ProposalRequest[]
 }
 
@@ -355,35 +354,6 @@ model NewsletterSubscriber {
   leadId      String?
   createdAt   DateTime @default(now())
   lead        Lead?    @relation(fields: [leadId], references: [id])
-}
-
-model LeadMagnet {
-  id             String   @id @default(cuid())
-  slug           String   @unique
-  titleEn        String
-  titleAr        String
-  descriptionEn  String   @default("")
-  descriptionAr  String   @default("")
-  coverImage     String   @default("")
-  fileUrl        String   @default("")
-  relatedService String   @default("")
-  status         String   @default("active")
-  sortOrder      Int      @default(0)
-  createdAt      DateTime @default(now())
-  downloads      LeadMagnetDownload[]
-}
-
-model LeadMagnetDownload {
-  id           String   @id @default(cuid())
-  leadMagnetId String
-  leadId       String?
-  name         String
-  email        String
-  phone        String   @default("")
-  company      String   @default("")
-  createdAt    DateTime @default(now())
-  leadMagnet   LeadMagnet @relation(fields: [leadMagnetId], references: [id], onDelete: Cascade)
-  lead         Lead?      @relation(fields: [leadId], references: [id])
 }
 
 model ProposalRequest {
